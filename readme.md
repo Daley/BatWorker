@@ -14,10 +14,11 @@
 ##使用范例
 + public\export.data为本工具导出数据，可以选择导入、清空导入查看范例
 
-##用到的东西
+##主要用到的东西
 + React
 + React-Bootstrap
 + Q
++ Reflux
 + 基于nwjs运行
 + webpack
 + ..

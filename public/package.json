@@ -1,0 +1,14 @@
+{
+  "name": "BatWorker",
+  "description": "BatWorker",
+  "version": "0.0.1",
+  "main": "index.html",
+  "window": {
+    "toolbar": true,
+    "width": 1500,
+    "height": 960
+  },
+  "webkit": {
+    "plugin": true
+  }
+}

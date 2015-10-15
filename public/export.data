@@ -1,0 +1,115 @@
+{
+    "curSpace": 0,
+    "curProject": 499,
+    "idCreater": 510,
+    "space": [
+        {
+            "id": 498,
+            "name": "空间名",
+            "projects": [
+                {
+                    "id": 499,
+                    "name": "game_en_hd",
+                    "vars": [
+                        {
+                            "id": 504,
+                            "desc": "",
+                            "name": "root",
+                            "val": "c:\\test"
+                        },
+                        {
+                            "id": 500,
+                            "desc": "",
+                            "name": "version",
+                            "val": "1.0.0"
+                        },
+                        {
+                            "id": 501,
+                            "desc": "",
+                            "name": "res",
+                            "val": "hd"
+                        },
+                        {
+                            "id": 502,
+                            "desc": "",
+                            "name": "lang",
+                            "val": "en"
+                        },
+                        {
+                            "id": 507,
+                            "desc": "",
+                            "name": "mode",
+                            "val": "release"
+                        }
+                    ],
+                    "jobs": [
+                        {
+                            "id": 505,
+                            "type": "readFile",
+                            "desc": "应用配置",
+                            "name": "读取文件",
+                            "fileName": "$root\\tmp\\$mode.json",
+                            "sons": [
+                                {
+                                    "id": 508,
+                                    "type": "saveFile",
+                                    "parent": 5,
+                                    "name": "存储文件",
+                                    "desc": "",
+                                    "url": "$root\\config.json"
+                                }
+                            ],
+                            "format": "utf-8"
+                        },
+                        {
+                            "id": 503,
+                            "type": "copyDir",
+                            "desc": "复制素材",
+                            "copyFrom": "$root\\res\\$res",
+                            "copyTo": "$root\\Resource",
+                            "name": "复制目录"
+                        },
+                        {
+                            "id": 509,
+                            "type": "runCmd",
+                            "name": "运行命令",
+                            "desc": "打包",
+                            "cmdStr": "pack.bat",
+                            "breakError": "true"
+                        },
+                        {
+                            "id": 510,
+                            "type": "delFile",
+                            "name": "删除文件",
+                            "desc": "清理现场",
+                            "files": [
+                                "$root\\config.json"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "panels": [
+        {
+            "panel_id": "jobQueue",
+            "left": 1142,
+            "top": 545,
+            "width": 300,
+            "height": 150
+        },
+        {
+            "panel_id": "logView",
+            "left": -26,
+            "top": 376,
+            "width": 400,
+            "height": 400
+        }
+    ],
+    "queues": [
+        485,
+        489,
+        349
+    ]
+}

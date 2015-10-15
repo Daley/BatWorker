@@ -22,6 +22,8 @@
 + webpack
 + ..
 
+![图片](https://github.com/Daley/BatWorker/blob/master/readme.png)
+
 ##todo
 + 现在的文件相关操作都是用dos命令的，如果需要在mac,linux使用要改JobCfgs.js
 + 帮助说明

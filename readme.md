@@ -22,6 +22,9 @@
 + webpack
 + ..
 
+##欢迎使用然后报bug提建议
+##欢迎一起维护
+
 ![图片](https://github.com/Daley/BatWorker/blob/master/readme.png)
 
 ##todo

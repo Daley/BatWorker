@@ -1,5 +1,5 @@
 {
-  "name": "打包工具",
+  "name": "BatWorker",
   "version": "1.0.0",
   "description": "No description",
   "main": "main.js",
@@ -31,8 +31,7 @@
     "rc-dialog":"5.0.3",
     "Q":"1.4.1",
     "copy-dir":"0.0.7",
-    "cp-file":"2.2.1",
-    "xml2json":"0.9.0"
+    "cp-file":"2.2.1"
   },
   "author": ""
 }

@@ -14,7 +14,16 @@
 ##使用范例
 + public\export.data为本工具导出数据，可以选择导入、清空导入查看范例
 
+##用到的东西
++ React
++ React-Bootstrap
++ Q
++ 基于nwjs运行
++ webpack
++ ..
+
 ##todo
 + 现在的文件相关操作都是用dos命令的，如果需要在mac,linux使用要改JobCfgs.js
 + 帮助说明
 + XEditableExt可能使用方式不对，现在会有些问题。那就是点击编辑时显示的内容可能不对
++ 代码结构 变量名 都很随意  ，偶尔用es6的class 偶尔又不用

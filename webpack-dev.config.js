@@ -29,7 +29,9 @@ module.exports = [
              fs: 'require("fs")',
              child_process:'require("child_process")',
              constants:'require("constants")',
-             'nw.gui':'require("nw.gui")'
+             'nw.gui':'require("nw.gui")',
+             process:'require("process")',
+             path:'require("path")'
         },
         ddnode: {
            

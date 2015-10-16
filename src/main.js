@@ -28,11 +28,15 @@ global.QueueStore=require("./stores/QueueStore.js");
 global.LogStore=require("./stores/LogStore.js");
 
 global.lang=require("./cfg/LangCfg.js");
+global.keyMgr=require("./common/KeyMgr.js");
+
+global.keyMgr.init($(document));
 
 import ValueGroup from './components/util/ValueGroup.js'
 import PopGroup from './components/util/PopGroup.js'
 import LogView from './components/util/LogView.js'
 import JobQueueView from './components/body/JobQueueView.js'
+import HeaderView from './components/header/Header.js'
 
 var _ = require('lodash');
 
@@ -88,26 +92,31 @@ global.globalReplace=function(value,vars){
             return value;
         }
 
+// <HeaderView/>
 var Main = React.createClass({
 	
 
     render: function() {
-       return <Grid fluid={ true }>
-                    <Row>                    
-                        <Col xs={ 5 }                             
-                             sm={ 4 }
-                             md={ 3 }
-                             lg={ 3 }>
-                            <SpaceList/>
-                        </Col>
-                        <Col xs={ 7 }                             
-                             sm={ 8 }
-                             md={ 9 }
-                             lg={ 9 }>
-                        <ProjectView/>
-                        </Col>
-                    </Row>
-                </Grid>
+       return   <div>
+                    
+                    <Grid fluid={ true }>
+
+                        <Row>                    
+                            <Col xs={ 5 }                             
+                                 sm={ 4 }
+                                 md={ 3 }
+                                 lg={ 3 }>
+                                <SpaceList/>
+                            </Col>
+                            <Col xs={ 7 }                             
+                                 sm={ 8 }
+                                 md={ 9 }
+                                 lg={ 9 }>
+                            <ProjectView/>
+                            </Col>
+                        </Row>
+                    </Grid>
+                </div>
     }
 });
 

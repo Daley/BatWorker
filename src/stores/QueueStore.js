@@ -8,7 +8,7 @@ var _ =require("lodash");
 var defaultModel = [];
 var isRunning=false;
 var global=window;
-
+var gui = require('nw.gui');
 
 var QueueStore = Reflux.createStore({
     model: defaultModel,
@@ -63,6 +63,21 @@ var QueueStore = Reflux.createStore({
     	return global.cfgs.getJobExe(newJob,project.vars,q);
     },
 
+    showResult:function(msg){
+        
+        window.log(msg);
+
+        var win = gui.Window.get();
+        //console.dir(win);
+        //win.focus();
+        setTimeout(function(){
+            win.focus();
+            alert(msg);
+
+        },2000);
+        
+    },
+
     runProject:function(id) {
     	var {space,project}=global.WorkStore.findProject(id);
         if(project==null){
@@ -95,7 +110,8 @@ var QueueStore = Reflux.createStore({
     test:function(id){
         var q=Q.Promise(function(resolve, reject, notify) {
             setTimeout(function(){
-                window.log("开始运行项目");
+                
+                this.showResult('全部运行完成');
             }, 2000);
 
         });
@@ -115,6 +131,7 @@ var QueueStore = Reflux.createStore({
 
         var q=init;
         var ps=this.model;
+        var showRes=this.showResult.bind(this);
         //var call=this.runPro
         //var q=init.promise;
         var call=this.runProject;
@@ -129,11 +146,13 @@ var QueueStore = Reflux.createStore({
         isRunning=true;
 		q.then(function (result) {
             isRunning=false;
-    		window.log("队列运行完成");
+    		//window.log("队列运行完成");
+            showRes('队列运行完成');
 		},function(rejected){
-            global.log("运行失败");
-            global.log(rejected);
             isRunning=false;
+            showRes('运行失败');
+            window.log(rejected);
+            
         });
 
 
@@ -142,19 +161,22 @@ var QueueStore = Reflux.createStore({
     },
 
     onRunJob:function(id){
+        var showRes=this.showResult.bind(this);
        
         if(isRunning){
             global.log('有未完成的任务！');
             return;
         }
+        var {space,project}=global.WorkStore.findProject(id);
         isRunning=true;
     	this.runProject(id).then(function(result){
-    		window.log("单个运行完成");
             isRunning=false;
+            showRes(project.name+' 运行完成');
+            
     	},function(rejected){
-            global.log("运行失败");
-            global.log(rejected);
             isRunning=false;
+            showRes(project.name+'运行失败');
+            global.log(rejected);            
         });
     },
 

@@ -11,18 +11,25 @@
        <script src="./js/codemirror.js"></script>
       
     	<script src="./js/jquery.min.js"></script>
+      <script src="./js/jquery.hotkeys.js"></script>
     	<script src="./js/bootstrap.js"></script>
       <link href="./css/bat.css" rel="stylesheet">
 
       <link rel="stylesheet" href="./css/codemirror.css">
   </head>
   <body>
-<div id="editor"></div>
     <div id="content" ></div>
     <div id="pop_layer" className="modal-container" style="left:0;top:0" ></div>
     <input style="display:none;" id="openFile" type="file" />
     <input style="display:none;" id="saveFile" type="file" nwsaveas />
      <input style="display:none;" id="clearImportEle" type="file" />
+
+     <script type="text/javascript">
+         console.dir(global.require.main);
+         window.indexFile=global.require.main.filename;
+         window.indexPath=require('path').dirname(window.indexFile);
+         console.log(window.indexPath);
+     </script>
      
     <script src="./bundle.js"></script>
   </body>

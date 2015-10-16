@@ -84,6 +84,10 @@
 
 	var _componentsBodyJobQueueViewJs2 = _interopRequireDefault(_componentsBodyJobQueueViewJs);
 
+	var _componentsHeaderHeaderJs = __webpack_require__(428);
+
+	var _componentsHeaderHeaderJs2 = _interopRequireDefault(_componentsHeaderHeaderJs);
+
 	__webpack_require__(373);
 
 	__webpack_require__(383);
@@ -103,6 +107,9 @@
 	global.LogStore = __webpack_require__(393);
 
 	global.lang = __webpack_require__(394);
+	global.keyMgr = __webpack_require__(426);
+
+	global.keyMgr.init($(document));
 
 	var _ = __webpack_require__(368);
 
@@ -159,31 +166,36 @@
 	    return value;
 	};
 
+	// <HeaderView/>
 	var Main = _react2['default'].createClass({
 	    displayName: 'Main',
 
 	    render: function render() {
 	        return _react2['default'].createElement(
-	            _reactBootstrap.Grid,
-	            { fluid: true },
+	            'div',
+	            null,
 	            _react2['default'].createElement(
-	                _reactBootstrap.Row,
-	                null,
+	                _reactBootstrap.Grid,
+	                { fluid: true },
 	                _react2['default'].createElement(
-	                    _reactBootstrap.Col,
-	                    { xs: 5,
-	                        sm: 4,
-	                        md: 3,
-	                        lg: 3 },
-	                    _react2['default'].createElement(SpaceList, null)
-	                ),
-	                _react2['default'].createElement(
-	                    _reactBootstrap.Col,
-	                    { xs: 7,
-	                        sm: 8,
-	                        md: 9,
-	                        lg: 9 },
-	                    _react2['default'].createElement(ProjectView, null)
+	                    _reactBootstrap.Row,
+	                    null,
+	                    _react2['default'].createElement(
+	                        _reactBootstrap.Col,
+	                        { xs: 5,
+	                            sm: 4,
+	                            md: 3,
+	                            lg: 3 },
+	                        _react2['default'].createElement(SpaceList, null)
+	                    ),
+	                    _react2['default'].createElement(
+	                        _reactBootstrap.Col,
+	                        { xs: 7,
+	                            sm: 8,
+	                            md: 9,
+	                            lg: 9 },
+	                        _react2['default'].createElement(ProjectView, null)
+	                    )
 	                )
 	            )
 	        );
@@ -59107,6 +59119,9 @@
 
 	var _ = __webpack_require__(368);
 	var fs = __webpack_require__(325);
+	var gui = __webpack_require__(390);
+	var process = __webpack_require__(7);
+	var path = __webpack_require__(332);
 
 	var localStorageKey = "bat_worker";
 
@@ -59131,9 +59146,12 @@
 	        }
 	    },
 
-	    onSaveSpace: function onSaveSpace() {
-	        //global.log('dengyp onSaveSpace');
+	    onSaveSpace: function onSaveSpace(evt) {
 	        localStorage.setItem(localStorageKey, JSON.stringify(this.workVo));
+
+	        if (evt) {
+	            global.log('保存成功！');
+	        }
 	    },
 
 	    onExportSpace: function onExportSpace() {
@@ -59149,7 +59167,7 @@
 	    },
 
 	    clearImport: function clearImport(val) {
-	        console.log('clearImport file', val);
+	        global.log('清空数据并导入文件', val);
 	        var str = fs.readFileSync(val, 'utf-8');
 	        var obj = JSON.parse(str);
 	        if (obj && obj.space) {
@@ -59159,7 +59177,7 @@
 	    },
 
 	    importSpace: function importSpace(val) {
-	        console.log('importSpace file', val);
+	        global.log('导入文件', val);
 	        var str = fs.readFileSync(val, 'utf-8');
 	        var obj = JSON.parse(str);
 	        if (obj && obj.space) {
@@ -59179,7 +59197,7 @@
 	    },
 
 	    exportSpace: function exportSpace(val) {
-	        console.log('exportSpace file', val);
+	        global.log('导出文件', val);
 	        fs.writeFileSync(val, JSON.stringify(this.workVo, null, 4), 'utf-8');
 	    },
 
@@ -59227,11 +59245,28 @@
 	            cip($(this).val());
 	        });
 
-	        var kh = this.onSaveSpace;
-	        var keyUtil = __webpack_require__(389);
-	        keyUtil.registerKey('Ctrl+Alt+B', kh);
+	        // var kh=this.onSaveSpace;
+	        // var keyUtil=require('../libs/KeyShort.js');
+	        // keyUtil.registerKey('Ctrl+Alt+B',kh);
+	        //setInterval(kh, 30000);
+	        global.keyMgr.register('ctrl_s', this.onSaveSpace.bind(this));
 
-	        setInterval(kh, 30000);
+	        global.keyMgr.register('ctrl_b', this.onPublish.bind(this));
+	    },
+
+	    onPublish: function onPublish() {
+	        //这是只有我用的。快速导出数据的
+	        var file = path.join(window.indexPath, '../tmp/svn/export.data');
+	        var vo = JSON.parse(JSON.stringify(this.workVo));
+	        var list = [];
+	        for (var i = 0; i < vo.space.length; i++) {
+	            if (vo.space[i].name != "BatWorker") {
+	                list.push(vo.space[i]);
+	            }
+	        }
+	        vo.space = list;
+
+	        fs.writeFileSync(file, JSON.stringify(vo, null, 4), 'utf-8');
 	    },
 
 	    //return {space:spaceVo,project:projectVo}
@@ -59262,52 +59297,7 @@
 	module.exports = WorkStore;
 
 /***/ },
-/* 389 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var gui = __webpack_require__(390);
-
-	var KeyShort = {
-	  registerKey: function registerKey(key, callback) {
-	    var option = {
-	      key: key,
-	      active: function active() {
-
-	        console.log("dengyp: " + this.key + " active.");
-	      },
-	      failed: function failed(msg) {
-	        console.log('dengyp registerKey error msg');
-	      }
-	    };
-
-	    var shortcut = new gui.Shortcut(option);
-	    //console.dir(shortCut);
-	    gui.App.registerGlobalHotKey(shortcut);
-
-	    // If register |shortcut| successfully and user struck "Ctrl+Shift+A", |shortcut|
-	    // will get an "active" event.
-
-	    // You can also add listener to shortcut's active and failed event.
-	    shortcut.on('active', function () {
-	      callback();
-	      console.log("dengyp Global desktop keyboard shortcut: " + this.key + " active.");
-	    });
-
-	    shortcut.on('failed', function (msg) {
-	      console.log('dengyp  shortcut error' + msg);
-	    });
-	  }
-	};
-
-	exports["default"] = KeyShort;
-	module.exports = exports["default"];
-
-/***/ },
+/* 389 */,
 /* 390 */
 /***/ function(module, exports) {
 
@@ -59351,6 +59341,7 @@
 	var defaultModel = [];
 	var isRunning = false;
 	var global = window;
+	var gui = __webpack_require__(390);
 
 	var QueueStore = Reflux.createStore({
 	    model: defaultModel,
@@ -59404,6 +59395,19 @@
 	        return global.cfgs.getJobExe(newJob, project.vars, q);
 	    },
 
+	    showResult: function showResult(msg) {
+
+	        window.log(msg);
+
+	        var win = gui.Window.get();
+	        //console.dir(win);
+	        //win.focus();
+	        setTimeout(function () {
+	            win.focus();
+	            alert(msg);
+	        }, 2000);
+	    },
+
 	    runProject: function runProject(id) {
 	        var _global$WorkStore$findProject = global.WorkStore.findProject(id);
 
@@ -59440,7 +59444,8 @@
 	    test: function test(id) {
 	        var q = Q.Promise(function (resolve, reject, notify) {
 	            setTimeout(function () {
-	                window.log("开始运行项目");
+
+	                this.showResult('全部运行完成');
 	            }, 2000);
 	        });
 	        return q;
@@ -59459,6 +59464,7 @@
 
 	        var q = init;
 	        var ps = this.model;
+	        var showRes = this.showResult.bind(this);
 	        //var call=this.runPro
 	        //var q=init.promise;
 	        var call = this.runProject;
@@ -59473,28 +59479,36 @@
 	        isRunning = true;
 	        q.then(function (result) {
 	            isRunning = false;
-	            window.log("队列运行完成");
+	            //window.log("队列运行完成");
+	            showRes('队列运行完成');
 	        }, function (rejected) {
-	            global.log("运行失败");
-	            global.log(rejected);
 	            isRunning = false;
+	            showRes('运行失败');
+	            window.log(rejected);
 	        });
 	    },
 
 	    onRunJob: function onRunJob(id) {
+	        var showRes = this.showResult.bind(this);
 
 	        if (isRunning) {
 	            global.log('有未完成的任务！');
 	            return;
 	        }
+
+	        var _global$WorkStore$findProject2 = global.WorkStore.findProject(id);
+
+	        var space = _global$WorkStore$findProject2.space;
+	        var project = _global$WorkStore$findProject2.project;
+
 	        isRunning = true;
 	        this.runProject(id).then(function (result) {
-	            window.log("单个运行完成");
 	            isRunning = false;
+	            showRes(project.name + ' 运行完成');
 	        }, function (rejected) {
-	            global.log("运行失败");
-	            global.log(rejected);
 	            isRunning = false;
+	            showRes(project.name + '运行失败');
+	            global.log(rejected);
 	        });
 	    },
 
@@ -63545,6 +63559,102 @@
 	};
 	exports["default"] = util;
 	module.exports = exports["default"];
+
+/***/ },
+/* 426 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	var KeyMgr = {
+
+	    init: function init(domEle) {
+	        //domEle.bind("keyup.ctrl_s",this.onKeyUp.bind(this));
+	        this.domEle = domEle;
+	    },
+
+	    register: function register(key, cb) {
+	        this.domEle.bind("keyup." + key, cb);
+	    },
+
+	    unregister: function unregister(key, cb) {
+	        this.domEle.unbind("keyup." + key, cb);
+	    }
+	};
+
+	module.exports = KeyMgr;
+	//export default KeyMgr;
+
+/***/ },
+/* 427 */,
+/* 428 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(22);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(177);
+
+	var HeaderView = (function (_Component) {
+		_inherits(HeaderView, _Component);
+
+		function HeaderView() {
+			_classCallCheck(this, HeaderView);
+
+			_get(Object.getPrototypeOf(HeaderView.prototype), 'constructor', this).call(this);
+		}
+
+		_createClass(HeaderView, [{
+			key: 'render',
+			value: function render() {
+				return _react2['default'].createElement(
+					_reactBootstrap.Navbar,
+					null,
+					_react2['default'].createElement(
+						'span',
+						null,
+						window.lang.APP_NAME
+					),
+					_react2['default'].createElement(
+						_reactBootstrap.Nav,
+						null,
+						_react2['default'].createElement(
+							_reactBootstrap.NavItem,
+							{ eventKey: 1, href: '#' },
+							'Link'
+						),
+						_react2['default'].createElement(
+							_reactBootstrap.NavItem,
+							{ eventKey: 2, href: '#' },
+							'Link'
+						)
+					)
+				);
+			}
+		}]);
+
+		return HeaderView;
+	})(_react.Component);
+
+	exports['default'] = HeaderView;
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

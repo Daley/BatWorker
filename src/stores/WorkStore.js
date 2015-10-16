@@ -7,6 +7,9 @@ var ProjectActions=global.ProjectActions;
 
 var _ = require('lodash');
 var fs=require('fs');
+var gui = require('nw.gui');
+var process=require('process');
+var path=require('path');
 
 const localStorageKey = "bat_worker";
 
@@ -28,9 +31,12 @@ var WorkStore = Reflux.createStore({
         
     },
 
-    onSaveSpace:function(){
-        //global.log('dengyp onSaveSpace');
+    onSaveSpace:function(evt){               
     	localStorage.setItem(localStorageKey, JSON.stringify(this.workVo));
+        
+        if(evt){
+            global.log('保存成功！');
+        } 
     },
 
     onExportSpace:function(){
@@ -46,7 +52,7 @@ var WorkStore = Reflux.createStore({
     },
 
     clearImport:function(val){
-        console.log('clearImport file',val);
+        global.log('清空数据并导入文件',val);
         var str=fs.readFileSync(val, 'utf-8');
         var obj=JSON.parse(str);
         if(obj&&obj.space){
@@ -57,7 +63,7 @@ var WorkStore = Reflux.createStore({
 
 
     importSpace:function(val){
-        console.log('importSpace file',val);
+        global.log('导入文件',val);
         var str=fs.readFileSync(val, 'utf-8');
         var obj=JSON.parse(str);
         if(obj&&obj.space){
@@ -77,7 +83,7 @@ var WorkStore = Reflux.createStore({
     },
 
     exportSpace:function(val){
-        console.log('exportSpace file',val);
+        global.log('导出文件',val);
         fs.writeFileSync(val, JSON.stringify(this.workVo,null,4), 'utf-8');
     },
 
@@ -126,11 +132,29 @@ var WorkStore = Reflux.createStore({
                 cip($(this).val());
             });
 
-            var kh=this.onSaveSpace;
-            var keyUtil=require('../libs/KeyShort.js');
-            keyUtil.registerKey('Ctrl+Alt+B',kh);
+           // var kh=this.onSaveSpace;
+           // var keyUtil=require('../libs/KeyShort.js');
+           // keyUtil.registerKey('Ctrl+Alt+B',kh);
+            //setInterval(kh, 30000);
+        global.keyMgr.register('ctrl_s',this.onSaveSpace.bind(this));
 
-            setInterval(kh, 30000);
+        global.keyMgr.register('ctrl_b',this.onPublish.bind(this));
+    },
+
+    onPublish:function(){
+        //这是只有我用的。快速导出数据的
+        var file=path.join(window.indexPath,'../tmp/svn/export.data');
+        var vo=JSON.parse(JSON.stringify(this.workVo));
+        var list=[];
+        for(var i=0;i<vo.space.length;i++){
+            if(vo.space[i].name!="BatWorker"){
+                list.push(vo.space[i]);
+            }
+        }
+        vo.space=list;
+
+        fs.writeFileSync(file, JSON.stringify(vo,null,4), 'utf-8');
+
     },
 
     //return {space:spaceVo,project:projectVo}

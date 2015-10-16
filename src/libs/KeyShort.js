@@ -15,6 +15,7 @@ var KeyShort={
 
     var shortcut = new gui.Shortcut(option);
     //console.dir(shortCut);
+    gui.App.unregisterGlobalHotKey(shortcut);
     gui.App.registerGlobalHotKey(shortcut);
 
     // If register |shortcut| successfully and user struck "Ctrl+Shift+A", |shortcut|

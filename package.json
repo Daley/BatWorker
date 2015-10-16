@@ -1,5 +1,5 @@
 {
-  "name": "BatWorker",
+  "name": "batworker",
   "version": "1.0.0",
   "description": "No description",
   "main": "main.js",
@@ -8,6 +8,17 @@
     "build-dev": "webpack --config webpack-dev.config.js --watch --progress --colors",
     "start": "webpack --config webpack-dev.config.js --watch --progress --colors"
   },
+  "keywords": [
+    "react",
+    "nwjs",
+    "react-bootstrap",
+    "q",
+    "bat",
+    "queue job",
+    "tool",
+    "useful",
+    "great"
+  ],
   "dependencies": {
     "babel-core": "^5.8.22",
     "babel-loader": "^5.3.2",
@@ -33,5 +44,5 @@
     "copy-dir":"0.0.7",
     "cp-file":"2.2.1"
   },
-  "author": ""
+  "author": "Daley"
 }

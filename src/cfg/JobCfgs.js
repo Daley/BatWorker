@@ -220,7 +220,7 @@ jobs.readFileTmp={
 
     	});
 		vo.sons.forEach(function(vo){
-			q=q.then(window.cfgs.getJobExe(vo,vars,q));
+			q=window.cfgs.getJobExe(vo,vars,q);
 		});
 		return q;
 	}
@@ -230,7 +230,7 @@ jobs.readFileTmp={
 jobs.replaceVarTmp={
 	id:6,
 	type:'replaceVar',	
-	parent:5,
+	parent:[5],
 	name:'查找替换',
 	find:'',
 	replace:'',
@@ -242,10 +242,14 @@ jobs.replaceVarTmp={
 	exec:function(vo,vars,q){
 		return q.then(function(result){
 			//console.log('dengyp replaceVarTmp '+result);
-			console.log('start replaceVarTmp');
-
-			result=result.replace(new RegExp(vo.find,'g'),vo.replace);
-			return result;
+			global.log('查找替换');
+			var myDefer = Q.defer();
+		    
+		    setTimeout(function(){
+		    	result=result.replace(new RegExp(vo.find,'g'),vo.replace);
+		    	myDefer.resolve(result);
+		    }, 100);
+		    return myDefer.promise;
 		});
 	}
 }
@@ -253,7 +257,7 @@ jobs.replaceVarTmp={
 jobs.saveFileTmp={
 	id:7,
 	type:'saveFile',	
-	parent:5,
+	parent:[5,10],
 	name:'存储文件',
 	desc:'',
 	url:'',
@@ -263,7 +267,7 @@ jobs.saveFileTmp={
 	},
 	exec:function(vo,vars,q){
 		return q.then(function(result){
-			global.log('读取文件',vo.url);
+			global.log('存储文件',vo.url);
 			fs.writeFileSync(vo.url,result,"utf8");
 			return result;
 		});
@@ -337,6 +341,59 @@ jobs.delFileTmp={
 		}
 		return Q.any(vo.files.map(getOne));
 	}
+}
+
+
+jobs.newFileTmp={
+	id:10,
+	type:'newFile',
+	name:'新建文件',
+	desc:'',
+	sons:[],
+	viewFilters:{
+		desc:'描述',
+		sons:'子项'
+	},
+	exec:function(vo,vars){
+		global.log('新建文件');
+		var myDefer = Q.defer();
+   		setTimeout(function(){
+    		myDefer.resolve('');
+    	}, 100);
+
+		var q = myDefer.promise;
+		vo.sons.forEach(function(vo){
+			q=window.cfgs.getJobExe(vo,vars,q);
+		});
+		return q;
+	}
+}
+
+jobs.appendStrTmp={
+	id:11,
+	type:'appendStr',	
+	parent:[5,10],
+	name:'追加内容',
+	desc:'',
+	content:'',
+	viewFilters:{
+		desc:'描述',
+		content:'内容'
+	},
+	exec:function(vo,vars,q){
+		return q.then(function(result){
+			var myDefer = Q.defer();
+		    
+		    setTimeout(function(){
+		    	
+		    	result+=vo.content;
+		    	window.log("fuck append:"+vo.content,result);
+		    	myDefer.resolve(result);
+		    }, 100);
+		    return myDefer.promise;
+		});
+	}
+
 }
 
 

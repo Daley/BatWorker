@@ -14,6 +14,21 @@ var QueueStore = Reflux.createStore({
     model: defaultModel,
     listenables: QueueActions,
 
+    init:function(){
+        this.lastProject=-1;
+        global.keyMgr.register('ctrl_r',this.onRunLast.bind(this));
+    },
+
+    onRunLast:function(){
+        global.log("dengyp onRunLast"+this.lastProject);
+        if(this.lastProject==-1){
+            this.onRunQueue();
+        }else{
+            this.onRunJob(this.lastProject); 
+        }
+        
+    },
+
     onChangeQueue: function(list) {
     	this.model=list;
         this.trigger(this.model);
@@ -70,16 +85,13 @@ var QueueStore = Reflux.createStore({
         var win = gui.Window.get();
         //console.dir(win);
         //win.focus();
-        setTimeout(function(){
             win.focus();
-            alert(msg);
-
-        },2000);
-        
+            //alert(msg);
     },
 
     runProject:function(id) {
     	var {space,project}=global.WorkStore.findProject(id);
+        this.lastProject=id;
         if(project==null){
             global.log("没找到项目:",id);
             return;
@@ -94,11 +106,13 @@ var QueueStore = Reflux.createStore({
     	var getQueue=function(){
     		//var jobs=[];
     		for(var key in project.jobs){
-                 
-    			q=q.then(function(k){
-                  console.log('getJob key',k);
-                    return getJob(project,project.jobs[k],q);
-                }.bind(null,key))
+                var item=project.jobs[key];
+                if(item.need==false){
+                    continue;
+                }
+    			q=q.then(function(item){
+                    return getJob(project,item,q);
+                }.bind(null,item))
     		}
     		//return jobs;
             return q;
@@ -123,6 +137,7 @@ var QueueStore = Reflux.createStore({
             global.log('有未完成的任务！');
             return;
         }
+        this.lastProject=-1;
 
         var init=Q.Promise(function(resolve, reject, notify) {
             window.log("开始运行队列");

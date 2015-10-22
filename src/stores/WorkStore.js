@@ -154,6 +154,7 @@ var WorkStore = Reflux.createStore({
         vo.space=list;
 
         fs.writeFileSync(file, JSON.stringify(vo,null,4), 'utf-8');
+        window.log(".");
 
     },
 

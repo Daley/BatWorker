@@ -22,15 +22,18 @@ global.ProjectActions=Reflux.createActions(AppCfgs.projectActions);
 global.QueueActions=Reflux.createActions(AppCfgs.queueActions);
 global.LogActions=Reflux.createActions(AppCfgs.logActions);
 
+global.lang=require("./cfg/LangCfg.js");
+global.keyMgr=require("./common/KeyMgr.js");
+global.keyMgr.init($(document));
+
 global.WorkStore=require("./stores/WorkStore.js");
 global.ProjectStore=require("./stores/ProjectStore.js");
 global.QueueStore=require("./stores/QueueStore.js");
 global.LogStore=require("./stores/LogStore.js");
 
-global.lang=require("./cfg/LangCfg.js");
-global.keyMgr=require("./common/KeyMgr.js");
 
-global.keyMgr.init($(document));
+
+
 
 import ValueGroup from './components/util/ValueGroup.js'
 import PopGroup from './components/util/PopGroup.js'

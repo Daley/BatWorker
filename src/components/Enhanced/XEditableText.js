@@ -32,8 +32,15 @@ var XEditableText = React.createClass({
       var ps=this.props;
       var v=Math.random().toString();
       var val=ps.val==''?"null":ps.val;
+      var refStr="#"+Math.random();
+      var set=this.setState.bind(this);
+      /*
+      setTimeout(function(){
+        set({ran:Math.random()});        
+      }, 100*Math.random());*/
+
       return (
-            <a href="#" 
+            <a href={refStr}
                ref="editableElement"
                id={ps.id}
                data-type="text"

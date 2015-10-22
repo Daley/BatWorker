@@ -108,10 +108,12 @@ AppCfgs.createJobByType=function(list,idx,type){
     }
 
 AppCfgs.getTopJobs=function(pId){
+	console.log('dengyp getTopJobs:',pId);
 	var arr=[];
 	for(var key in jobs){
 		var job=jobs[key];
-		if(job.parent==pId){
+		console.log(job.parent);
+		if(job.parent==pId||(job.parent&&job.parent.indexOf(pId)>-1)){
 			arr.push({type:job.type,name:job.name});
 		}		
       }

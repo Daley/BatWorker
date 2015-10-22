@@ -5,6 +5,8 @@ import React, {Component} from 'react';
 import ValueGroup from '../util/ValueGroup.js'
 import XEditableText from "../Enhanced/XEditableText.js";
 import {Grid, Row,Col,Button,DropdownButton,MenuItem,Panel,Nav,NavItem,PanelGroup,Label,Accordion} from 'react-bootstrap';
+import ToggleBtn from '../util/ToggleBtn.js';
+
 var _ = require('lodash');
 
 var global=window;
@@ -131,6 +133,11 @@ class JobItem extends Component{
        global.showPop(ps);
     }
 
+    onToggleNeed(val){
+        var item=this.props.data;
+        item.need=val;
+    }
+
     render(){
         var item=this.props.data;
         
@@ -139,6 +146,10 @@ class JobItem extends Component{
         var filters=this.props.viewFilters;
         var wh=3;
         var cps={xs:wh,sm:wh,md:wh,lg:wh};
+        if(item.need==undefined){
+            item.need=true;
+        }
+       // arr.push(<ToggleBtn selected={item.need} onChange={this.onToggleNeed.bind(this)}/>);
         for(var key in item){
         	if(filters[key]==null){
         		continue;
@@ -167,9 +178,12 @@ class JobItem extends Component{
             }
                        
         }
+        //
         //global.log("render jobview",this.props.idx);
         //<Row>{arr}</Row>defaultExpanded={true} expanded={true}
-    return (<Panel header={item.name+"--::--"+item.desc} eventKey={this.props.idx} collapsible={true} expanded={this.props.expanded} onClick={this.onClickCall.bind(this)} onSelect={this.onSelectChange.bind(this)}>
+    var head=<div>{item.name+"--::--"+item.desc+"  "}<ToggleBtn selected={item.need} onChange={this.onToggleNeed.bind(this)}/></div>;
+
+    return (<Panel header={head} eventKey={this.props.idx} collapsible={true} expanded={this.props.expanded} onClick={this.onClickCall.bind(this)} onSelect={this.onSelectChange.bind(this)}>
         			<Row>{arr}</Row>
                 </Panel>);
                 

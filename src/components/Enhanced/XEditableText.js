@@ -14,11 +14,15 @@ var XEditableText = React.createClass({
     componentWillUnmount:function(){
        var dom=$(React.findDOMNode(this.refs.editableElement));
       dom.on('save',null);
+
     },
 
     componentDidMount: function(){
       var dom=$(React.findDOMNode(this.refs.editableElement));
-      dom.editable();
+
+     //window.log('dengyp XEditableText componentDidMount:'+this.props.val);
+      var val=this.props.val==''?"":this.props.val;
+      dom.editable({value:this.props.val});
 
       dom.on('save', (e, params)=> {
         if(this.props.onChange){
@@ -32,8 +36,13 @@ var XEditableText = React.createClass({
       var ps=this.props;
       var v=Math.random().toString();
       var val=ps.val==''?"null":ps.val;
+      var max=35;
+      if(val.length>max){
+        val=val.substring(0,max)+"..."
+      }
       var refStr="#"+Math.random();
       var set=this.setState.bind(this);
+      setTimeout(this.componentDidMount.bind(this), 10);
       /*
       setTimeout(function(){
         set({ran:Math.random()});        

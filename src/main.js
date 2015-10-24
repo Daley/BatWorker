@@ -31,77 +31,31 @@ global.ProjectStore=require("./stores/ProjectStore.js");
 global.QueueStore=require("./stores/QueueStore.js");
 global.LogStore=require("./stores/LogStore.js");
 
+global.popMgr=require("./common/PopMgr.js");
+global.popMgr.init(document.getElementById('pop_layer'))
 
-
-
+require('./common/GlobalFunc.js');
 
 import ValueGroup from './components/util/ValueGroup.js'
 import PopGroup from './components/util/PopGroup.js'
-import LogView from './components/util/LogView.js'
-import JobQueueView from './components/body/JobQueueView.js'
 import HeaderView from './components/header/Header.js'
 
 var _ = require('lodash');
 
 console.dir(AppCfgs);
 
-
 global.WorkStore.initStore();
-
 console.log("workVo");
 console.dir(global.WorkStore);
 
 var SpaceList = require("./components/body/SpaceList.js");
 var ProjectView = require("./components/body/ProjectView.js");
 
-
-global.cloneCreate=function(data){
-	var obj=_.clone(data,true);
-    if(_.isString(obj)){
-        return obj;
-    }
-    //循环id
-    var chgId=function(obj){
-        if(obj.hasOwnProperty('id')){
-            obj.id=global.WorkStore.createIncId();
-        }
-        for(var key in obj){
-            if(_.isArray(obj[key])||_.isObject(obj[key])){
-                chgId(obj[key]);
-            }
-        }
-    }
-	
-    chgId(obj);
-    delete obj.viewFilters;
-    delete obj.exec;
-	console.log('dengyp new clone');
-	console.dir(obj);
-	return obj;
-}
-
-global.log=function(){
-    var arr=Array.prototype.slice.call(arguments);
-    var str=arr+"";
-    console.log(str);
-    global.LogActions.addLog(str);
-}
-
-global.globalReplace=function(value,vars){
-            for(var kv in vars){
-                var {name,val}=vars[kv];
-                value=value.replace(new RegExp("\\$"+name,'g'),val);
-            }
-            return value;
-        }
-
 // <HeaderView/>
 var Main = React.createClass({
-	
-
     render: function() {
        return   <div>
-                    
+                    <HeaderView/>
                     <Grid fluid={ true }>
 
                         <Row>                    
@@ -123,43 +77,22 @@ var Main = React.createClass({
     }
 });
 
-React.render(<Main />, document.getElementById('content'));
-
+//var TestEditor=require('./components/TestEditor.js')
+React.render(<Main/>, document.getElementById('content'));
 //global.popMgr=React.createElement(PopGroup);
-React.render(<PopGroup/>,document.getElementById('pop_layer'));
+React.render(<PopGroup/>,document.getElementById('panel_layer'));
 
 //panels
 var panels=global.WorkStore.workVo.panels;
-
-function getPanelByType(type){
-    if(type=="jobQueue"){
-        return JobQueueView;
-    }else if(type=="logView"){
-        return LogView;
-    }
-    return null;
-}
-
-function getPanelNameByType(type){
-    if(type=="jobQueue"){
-        return '执行队列';
-    }else if(type=="logView"){
-        return '日志';
-    }
-    return '未定义';
-}
-
-
 console.dir(panels);
-
 var func=function(){
     panels.map(function(item){
         //传的是引用 ，改了就改了
         global.showPop(
             {
                 isFloat:true,vo:item,
-                clazz:getPanelByType(item.panel_id),
-                header:getPanelNameByType(item.panel_id)
+                clazz:global.getPanelByType(item.panel_id),
+                header:global.getPanelNameByType(item.panel_id)
             }
             );
     })

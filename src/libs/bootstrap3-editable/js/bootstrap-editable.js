@@ -1970,6 +1970,7 @@ Makes editable any HTML element on the page. Applied as jQuery method.
     $.fn.editable = function (option) {
         //special API methods returning non-jquery object
         var result = {}, args = arguments, datakey = 'editable';
+        
         switch (option) {
             /**
             Runs client-side validation for all matched editables
@@ -2128,6 +2129,9 @@ Makes editable any HTML element on the page. Applied as jQuery method.
             var $this = $(this), 
                 data = $this.data(datakey), 
                 options = typeof option === 'object' && option;
+       //console.log("ffffffffffffffffffffffffffffffff");
+                //console.dir(data);
+                //console.dir(options);
 
             //for delegated targets do not store `editable` object for element
             //it's allows several different selectors.
@@ -2137,9 +2141,17 @@ Makes editable any HTML element on the page. Applied as jQuery method.
                 return; 
             }    
             
-            if (!data) {
+            if (!data) {                
                 $this.data(datakey, (data = new Editable(this, options)));
-            }
+            }else if(option.value){
+                //data.setValue(data.value);
+                data.input.value=option.value;
+                data.value=option.value;
+                if(data.container){
+                    data.container.formOptions.value=option.value;
+                }
+                
+            }            
 
             if (typeof option === 'string') { //call method 
                 data[option].apply(data, Array.prototype.slice.call(args, 1));

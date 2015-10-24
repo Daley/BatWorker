@@ -55,6 +55,8 @@ class MovePanel extends Component{
 			pos:{x:e.pageX,y:e.pageY},
 			init:{left:vo.left,top:vo.top}
 		});
+		e.stopPropagation();
+
 		//console.log("dengyp MovePanel onMouseDown");
 	}
 
@@ -66,18 +68,21 @@ class MovePanel extends Component{
 			this.forceUpdate();
 		}
 		//console.log("dengyp MovePanel onMouseMove");
-
+		e.stopPropagation();
+		
 	}
 
 	onMouseUp(e){
 		this.setState({isMouseDown:false});
+		e.stopPropagation();
+		
 		//console.log("dengyp MovePanel onMouseDown");
 	}
 
 	renderHeader(){
-		return <MenuItem onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
+		return <div onMouseDown={this.onMouseDown.bind(this)} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
 					{this.props.header}
-				</MenuItem>
+				</div>
 	}
 
 	render(){

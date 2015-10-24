@@ -28,8 +28,9 @@ class QueueItem extends Component{
     render(){
        var {space,project,idx}=this.props;
         return (
-        		<ListGroupItem bsStyle="info" onClick={this.onSelectChange.bind(this)}>
-        			 <Button bsSize="xs"  onClick={this.onRun.bind(this)}><Glyphicon glyph="play-circle" /></Button> 
+        		<ListGroupItem bsStyle="info" >
+                    <Button bsSize="xs"  onClick={this.onSelectChange.bind(this)}><Glyphicon glyph="check" /></Button> 
+        			<Button bsSize="xs"  onClick={this.onRun.bind(this)}><Glyphicon glyph="play-circle" /></Button> 
                     {space.name+"::"+project.name}
         		</ListGroupItem>);
     }

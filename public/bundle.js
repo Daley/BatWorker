@@ -60639,6 +60639,13 @@
 					pos: { x: e.pageX, y: e.pageY },
 					init: { left: vo.left, top: vo.top }
 				});
+
+				//window.document.addEventListener("onmousemove", this.onMouseMove.bind(this));
+				//window.document.addEventListener("onmouseup", this.onMouseMove.bind(this));
+
+				$(document).mousemove(this.onMouseMove.bind(this));
+				$(document).mouseup(this.onMouseUp.bind(this));
+
 				e.stopPropagation();
 
 				//console.log("dengyp MovePanel onMouseDown");
@@ -60646,6 +60653,7 @@
 		}, {
 			key: 'onMouseMove',
 			value: function onMouseMove(e) {
+
 				if (this.state.isMouseDown) {
 					var vo = this.props.vo;
 					vo.left = e.pageX - this.state.pos.x + this.state.init.left;
@@ -60662,13 +60670,17 @@
 				e.stopPropagation();
 
 				//console.log("dengyp MovePanel onMouseDown");
+				$(document).mousemove(null);
+				$(document).mouseup(null);
 			}
+
+			//onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}
 		}, {
 			key: 'renderHeader',
 			value: function renderHeader() {
 				return _react2['default'].createElement(
 					'div',
-					{ onMouseDown: this.onMouseDown.bind(this), onMouseUp: this.onMouseUp.bind(this), onMouseMove: this.onMouseMove.bind(this) },
+					{ style: { cursor: 'move' }, onMouseDown: this.onMouseDown.bind(this) },
 					this.props.header
 				);
 			}

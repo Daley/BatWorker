@@ -139,6 +139,7 @@ var SpaceList = React.createClass({
     },   
 
     onModelChange: function(model) {
+        console.log('dengyp SpaceList.onModelChange');
         this.setState(model);
     },
 

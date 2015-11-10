@@ -81,8 +81,7 @@ class JobQueueView extends Component{
     }
 
     onModelChange(model) {
-    	console.log(" JobQueueView fuck onModelChange");
-		console.dir(model);
+         console.log('dengyp JobQueueView.onModelChange');
         this.setState({list:model});
     }
 

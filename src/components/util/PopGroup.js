@@ -52,6 +52,7 @@ class MovePanel extends Component{
 		var vo=this.props.vo;
 		this.setState({
 			isMouseDown:true,
+			mouse:{x:vo.left,y:vo.top},
 			pos:{x:e.pageX,y:e.pageY},
 			init:{left:vo.left,top:vo.top}
 		});
@@ -72,8 +73,9 @@ class MovePanel extends Component{
 
 		if(this.state.isMouseDown){
 			var vo=this.props.vo;
-			vo.left=e.pageX-this.state.pos.x+this.state.init.left;
-			vo.top=e.pageY-this.state.pos.y+this.state.init.top;
+			var mouse=this.state.mouse;
+			mouse.x=e.pageX-this.state.pos.x+this.state.init.left;
+			mouse.y=e.pageY-this.state.pos.y+this.state.init.top;
 			this.forceUpdate();
 		}
 		//console.log("dengyp MovePanel onMouseMove");
@@ -83,6 +85,13 @@ class MovePanel extends Component{
 
 	onMouseUp(e){
 		this.setState({isMouseDown:false});
+		var vo=this.props.vo;
+		var mouse=this.state.mouse;
+		vo=vo.set("left",mouse.x);
+		vo=vo.set("top",mouse.y);
+
+		this.props.vo=vo;
+
 		e.stopPropagation();
 		
 		//console.log("dengyp MovePanel onMouseDown"); 
@@ -99,8 +108,9 @@ class MovePanel extends Component{
 
 	render(){
 		var vo=this.props.vo;
+		var mouse=this.state.mouse?this.state.mouse:{x:vo.left,y:vo.top};
 		var clazz=this.props.clazz;
-		var obj={height: vo.height,position: 'absolute',left:vo.left,top:vo.top,width:vo.width};
+		var obj={height: vo.height,position: 'absolute',left:mouse.x,top:mouse.y,width:vo.width};
 		var header=this.renderHeader();//this.props.header;
 
 		//obj={position: 'absolute',backgroundColor:'green',left:vo.left,top:vo.top};

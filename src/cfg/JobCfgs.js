@@ -21,10 +21,11 @@ jobs.clearDirTmp={
 		console.dir(vo);
 		var getOne=function(path){
 			 console.log('start clearDir');
-			 console.log('rm -r '+path);
+			 global.log('RMDIR /S /Q '+path);
 			var call=function(resolve, reject, notify) {
-				exec( 'rm -r ' + path, function ( err, stdout, stderr ){
+				exec( 'RMDIR /S /Q ' + path, function ( err, stdout, stderr ){
 				  if(err){
+				  	global.log(err);
 				  	reject(err);
 				  }else{
 				  	resolve("成功删除目录");
@@ -50,16 +51,23 @@ jobs.copyFileTmp={
 		copyTo:'目标文件'
 	},
 	exec:function(vo){
+		var cpFile = require('cp-file');
+		return cpFile(vo.copyFrom, vo.copyTo,{overwrite:true});
+
 		return Q.Promise(function(resolve, reject, notify) {
 			global.log('复制文件',vo.copyFrom,vo.copyTo);	
 			var cpFile = require('cp-file');
  			console.dir(vo);
+ 			return;
  			//return;
 			cpFile(vo.copyFrom, vo.copyTo, function (err) {
 			    if(err){
 				  	reject(err);
+				  	global.log('复制文件失败');	
 				  }else{
-				  	resolve("成功删除目录");
+
+				  	global.log('成功复制文件');	
+				  	resolve("成功复制文件");
 				 }
 			});
     	});
@@ -83,7 +91,7 @@ jobs.copyDirTmp={
 			var copyDir = require('copy-dir');
 			global.log('复制目录',vo.copyFrom,vo.copyTo);	
 			console.dir(vo);
-			var str='xcopy "'+vo.copyFrom+'" "'+vo.copyTo+'" /D /E /I /F /Y';
+			var str='xcopy "'+vo.copyFrom+'" "'+vo.copyTo+'" /E /I /F /Y';	///D 去掉了,不进行时间比较
 			exec( str, function ( err, stdout, stderr ){
 				  if(err){
 				  	reject(err);
@@ -121,7 +129,7 @@ jobs.combinXmlTmp={
 	},
 	exec:function(vo,vars){
 		if(vo.xmls.length<2){
-			return null;
+			//return null;
 		}
 		var dealData=function(data){
 			data=window.globalReplace(data,vars);
@@ -145,7 +153,7 @@ jobs.combinXmlTmp={
     	var runText=function(url){
     		return q.then(function(result){
 				//console.log('dengyp replaceVarTmp '+result);
-				global.log('合并xml',url);
+				global.log('合并xml处理',url);
 				//console.dir(result);
 				var data=fs.readFileSync(url,'utf8');
 				var xml=dealData(data);
@@ -163,12 +171,14 @@ jobs.combinXmlTmp={
 						list=list[0].getElementsByTagName(arr[j]);
 						console.log('fuck here end',arr[j]);
 					}
+										
 					
-					console.dir(node);
-					console.dir(list);
 					for(var j=0;j<list.length;j++){
 						node.appendChild(list[j].cloneNode(true));
+						//node.appendChild('\n\r');
 					}
+					console.dir(node);
+					console.dir(list);
 				}
 
 				return result;
@@ -181,8 +191,9 @@ jobs.combinXmlTmp={
     	return q.then(function(result){
 
     		var str=(new XMLSerializer()).serializeToString(result);
-    		//console.log('combinXml result');
-    		//console.dir(result);
+    		str=str.replace(/\/\>\</g,"/>\n<");
+    		console.log('combinXml result');
+    		console.dir(result);
 			fs.writeFileSync(vo.saveAs,str,"utf8");
 			return str;
     	});
@@ -291,20 +302,22 @@ jobs.runCmdTmp={
 		var call=function(resolve, reject, notify) {
 				//return;
 			global.log('运行命令',vo.cmdStr);
-				exec( vo.cmdStr, function ( err, stdout, stderr ){
-					console.log('end runCmdTmp',err);
-				  if(err){
-				  	if(vo.breakError=='true'){
-						reject(err);
-				  	}else{
-						resolve("运行命令失败");
-				 		global.log('运行命令失败',vo.cmdStr);
-				  	}
-				  	
-				  }else{
-				  	resolve("成功运行命令");
-				 	global.log('成功运行命令',vo.cmdStr);
-				  }
+			//global.log('运行命令',global.cfgs.getVarByKey(vars,"root"));
+				exec(vo.cmdStr,{ cwd: global.cfgs.getVarByKey(vars,"root")}, 
+					function ( err, stdout, stderr ){
+						console.log('end runCmdTmp',err);
+					  if(err){
+					  	if(vo.breakError=='true'){
+							reject(err);
+					  	}else{
+							resolve("运行命令失败");
+					 		global.log('运行命令失败',vo.cmdStr);
+					  	}
+					  	
+					  }else{
+					  	resolve("成功运行命令");
+					 	global.log('成功运行命令',vo.cmdStr);
+					  }
 				});
 			};
 

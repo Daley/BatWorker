@@ -31,6 +31,7 @@ var ProjectView = React.createClass({
     },
 
     onModelChange: function(model) {
+        console.log('dengyp ProjectStore.onModelChange');
         this.setState(model);
     },
 
@@ -93,7 +94,7 @@ var ProjectView = React.createClass({
          var vo=this.state;
         var ps={};
         ps.list=vo.jobs;
-        ps.creatorAsync=this.createJobFunc.bind(this);
+        ps.creatorAsync=this.createJobFunc;
         ps.renderClazz=JobView;
         ps.header='内容列表';
         //ps.viewFilters=global.cfgs.varView;

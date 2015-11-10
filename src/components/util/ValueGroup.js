@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ReactAdd from 'react/addons';
 import * as ReactBootstrap from 'react-bootstrap';
 import XEditableText from "../Enhanced/XEditableText.js";
 
@@ -10,7 +11,16 @@ var global=window;
 class DefaultItem extends Component{
     onChange(key,val){
         var vo=this.props.data;
-        vo[key]=val;
+        //vo[key]=val;
+        //console.log('...............DefaultItem................');
+        //console.dir(vo);
+       // console.log('k-v:'+key+'-'+val);
+        //if(vo.hasOwnProperty('set')){
+            vo.set(key,val);
+        //}else{
+         //   vo[key]=val;
+        //}
+        
     }
 
     onSelectChange(){;
@@ -59,12 +69,19 @@ class DefaultGroup extends Component{
 //id={key} title={key} val={val} 	 id={key} title={filters[key]} val={val}   <span>{filters[key]}<XEditableText/></span>;
 //<XEditableText id={key} title={key} val={val}/>  <XEditableText id={key} title={filters[key]} val={val}/>
 
+    constructor() {
+        super();
+        this.state={ expanded: true};
+    }
+
     renderItems(){
     	var list=this.props.list;
         var viewFilters=this.props.viewFilters;
         var onSelectChange=this.props.onSelectChange;
     	var arr=[];
     	var idx=0;
+        //console.log("dengyp DefaultGroup");
+        //console.dir(list);
     	list.map(function(item){
                     arr.push(
                             <DefaultItem data={item} idx={idx++} viewFilters={viewFilters} onSelectChange={onSelectChange}/>
@@ -73,9 +90,13 @@ class DefaultGroup extends Component{
     	return arr;
     }
 
+    onClickCall(){
+        this.setState({expanded:!this.state.expanded});
+    }
+
     render(){    	
         return (        	
-            <Panel {...this.props}>
+            <Panel {...this.props} collapsible={true} expanded={this.state.expanded} onSelect={this.onClickCall.bind(this)} >
             	{
             		this.renderItems()
             	}
@@ -136,7 +157,8 @@ class ValueGroup extends Component {
             return;
         }
 		var {list,idx}=this.getListAndIdx();
-		_.pullAt(list,idx);
+        list.splice(idx,1);
+		//_.pullAt(list,idx);
 		this.onDataChange();		
 		//this.props.list.push(this.props.creator());
 	}
@@ -184,13 +206,35 @@ class ValueGroup extends Component {
 		if(idx>=list.length){
 			idx=-1;
 		}
-        this.onSelectChange(idx);//按理说，下面这句会驱动刷新，可是有时候不会刷新        
+        if(this.onSelectChange){
+            this.onSelectChange(idx);//按理说，下面这句会驱动刷新，可是有时候不会刷新    
+        }
+            
 		this.setState({selectIdx:idx});//
 	}
 
     onClearSelect(){
         this.onSelectChange(-1);
     }
+
+    onCutViewSelect(){
+        console.log('fuck onCutViewSelect');
+        console.log('dengyp check',React.isValidElement(ValueGroup));
+        console.log('dengyp check',React.isValidElement(numTip));
+        console.dir(this);
+        //console.log(React.renderToString(this));
+       //global.CutViewActions.cutView(React.renderToString(<ValueGroup {...this.props}/>));
+       global.CutViewActions.cutView(JSON.stringify(this.props.list,null,"\n"));
+       //console.log(JSON.stringify(this.props.list,null,4));
+       
+       //global.CutViewActions.cutView(React.addons.cloneWithProps(this));
+    }
+    /*
+<OverlayTrigger placement="top" overlay={numTip}>
+                    <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>v</Button></OverlayTrigger>
+
+                    <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>v</Button>
+    */
 
     renderHeader(){
         return <div>
@@ -213,6 +257,8 @@ class ValueGroup extends Component {
 			        <Button bsSize="small" onClick={this.onDuplicate.bind(this)} ref="dupBtn" disabled={disableCreate}><Glyphicon glyph="duplicate"/> </Button></OverlayTrigger>
                     <OverlayTrigger placement="top" overlay={numTip}>
 			        <Button bsSize="small" onClick={this.onClearSelect.bind(this)} ref='numBtn'>{this.state.selectIdx}</Button></OverlayTrigger>
+
+                    
 			      </ButtonGroup>
 			      		      
     			</ButtonToolbar>
@@ -222,10 +268,11 @@ class ValueGroup extends Component {
     }
 
     render(){
+
        var ps=_.assign({},this.props,{onSelectChange:this.onSelectChange.bind(this)});
         if(this.props.renderClazz){
             return (
-            <div>          
+            <div ref="cont">          
                 {this.renderHeader()}            
                 {React.createElement(this.props.renderClazz,ps)}       
             </div>
@@ -234,14 +281,14 @@ class ValueGroup extends Component {
 
     	if(this.props.renderHandler){
     		return (
-        	<div>
+        	<div ref="cont">
         	{this.renderHeader()}            
             {this.props.renderHandler(this.onSelectChange.bind(this))}       
             </div>
         	);
     	}
     	return (
-        	<div>
+        	<div ref="cont">
         		{this.renderHeader()}            
             	<DefaultGroup {...ps}/>            
             </div>

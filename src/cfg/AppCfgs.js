@@ -28,6 +28,10 @@ AppCfgs.logActions=[
 	'cleanLog'
 ]
 
+AppCfgs.cutViewActions=[
+	'cutView'
+]
+
 AppCfgs.projectActions=[
 	 'changeAction'
 ]
@@ -46,6 +50,13 @@ AppCfgs.panelsTmp=[
 	},
 	{
 		panel_id:'logView',
+		left:500,
+		top:600,
+		width:300,
+		height:400
+	},
+	{
+		panel_id:'cutView',
 		left:500,
 		top:600,
 		width:300,
@@ -98,8 +109,9 @@ AppCfgs.createJobByType=function(list,idx,type){
       for(var key in jobs){
       	var jobTmp=jobs[key];
       	if(jobTmp.type==type){
-
-      		list.splice(idx,0,window.cloneCreate(jobTmp));
+      		var obj=window.cloneCreate(jobTmp);
+      		obj.expanded=true;
+      		list.splice(idx,0,obj);
       		return;
       	}
       }
@@ -154,6 +166,16 @@ AppCfgs.getJobExe=function(vo,vars,q){
       		return jobTmp.exec(vo,vars,q);
       	}
       }
+    return null;
+}
+
+AppCfgs.getVarByKey=function(vars,name){
+	for(var key in vars){
+      	var varTmp=vars[key];
+      	if(varTmp.name==name){
+      		return varTmp.val;
+      	}
+    }
     return null;
 }
 

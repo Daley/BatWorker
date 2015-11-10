@@ -16,7 +16,7 @@ class StringItem extends Component{
 	 onChange(key,val){
         console.log('StringItem+'+val);
         console.dir(this.props);
-        this.props.list[this.props.idx]=val;
+        this.props.list.splice(this.props.idx,1,val);
         this.props.data=val;
         //this.setState({});
     }
@@ -71,8 +71,9 @@ class JobItem extends Component{
 
     onChange(key,val){
         var vo=this.props.data;
-        vo[key]=val;
-        this.setState({});
+        //vo[key]=val;
+        vo.set(key,val)
+        //this.setState({});
     }
 
     onClickCall(){
@@ -82,12 +83,37 @@ class JobItem extends Component{
     }
 
     onSelectChange(e){
-        e.preventDefault();        
+        e.preventDefault();
+        var item=this.props.data;       
         if(this.props.onSelectChange){
             this.props.onSelectChange(this.props.idx);
         }
-        this.props.expanded=!this.props.expanded; 
-        this.setState({});    
+        item.set('expanded',!this.getExpanded());
+
+        //this.setState({});    
+    }
+
+    onToggleNeed(val){
+        var item=this.props.data;
+        //item.need=val;
+        item.set('need',!this.getNeed());
+        console.log('need need need needneedneedneed');
+    }
+
+    getNeed(){
+        var item=this.props.data;
+        if(item.need==undefined){
+            return true;
+        }
+        return item.need;
+    }
+
+    getExpanded(){
+        var item=this.props.data;
+        if(item.expanded==undefined){
+            return false;
+        }
+        return item.expanded;
     }
 
     createSonJobFunc(idx,cb){
@@ -131,24 +157,18 @@ class JobItem extends Component{
         }
 
        global.showPop(ps);
-    }
-
-    onToggleNeed(val){
-        var item=this.props.data;
-        item.need=val;
-    }
+    }   
 
     render(){
-        var item=this.props.data;
-        
+        var item=this.props.data;        
         
         var arr=[];
         var filters=this.props.viewFilters;
         var wh=3;
         var cps={xs:wh,sm:wh,md:wh,lg:wh};
-        if(item.need==undefined){
-            item.need=true;
-        }
+        var need=this.getNeed();
+        var expanded=this.getExpanded();
+
        // arr.push(<ToggleBtn selected={item.need} onChange={this.onToggleNeed.bind(this)}/>);
         for(var key in item){
         	if(filters[key]==null){
@@ -178,12 +198,12 @@ class JobItem extends Component{
             }
                        
         }
-        //
-        //global.log("render jobview",this.props.idx);
-        //<Row>{arr}</Row>defaultExpanded={true} expanded={true}
-    var head=<div>{item.name+"--::--"+item.desc+"  "}<ToggleBtn selected={item.need} onChange={this.onToggleNeed.bind(this)}/></div>;
 
-    return (<Panel header={head} eventKey={this.props.idx} collapsible={true} expanded={this.props.expanded} onClick={this.onClickCall.bind(this)} onSelect={this.onSelectChange.bind(this)}>
+    //global.log("render jobview",item.expanded);
+        //<Row>{arr}</Row>defaultExpanded={true} expanded={true}
+    var head=<div>{item.name+"--::--"+item.desc+"  "}<ToggleBtn selected={need} onChange={this.onToggleNeed.bind(this)}/></div>;
+
+    return (<Panel header={head} eventKey={this.props.idx} collapsible={true} expanded={expanded} onClick={this.onClickCall.bind(this)} onSelect={this.onSelectChange.bind(this)}>
         			<Row>{arr}</Row>
                 </Panel>);
                 
@@ -200,7 +220,7 @@ class JobView extends Component{
     	list.map(function(item){
                     var viewFilters=global.cfgs.getViewFilter(item.type);
                     arr.push(
-                            <JobItem data={item} idx={idx++} viewFilters={viewFilters} expanded={true} onSelectChange={onSelectChange}/>
+                            <JobItem data={item} idx={idx++} viewFilters={viewFilters} onSelectChange={onSelectChange}/>
                             )
                         });
     	return arr;
@@ -208,11 +228,11 @@ class JobView extends Component{
 //Accordion
     render(){    	
         return (        	
-            <div >
+            <PanelGroup accordion>
             	{
             		this.renderItems()
             	}
-            </div>
+            </PanelGroup>
         );
     }
 	

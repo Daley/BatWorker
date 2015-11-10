@@ -2,6 +2,7 @@
 
 var global=window;
 var Reflux = require('reflux');
+var Freezer=require("freezer-js");
 var SpaceActions = global.SpaceActions;
 var ProjectActions=global.ProjectActions;
 
@@ -15,9 +16,13 @@ const localStorageKey = "bat_worker";
 
 var WorkStore = Reflux.createStore({
     listenables: SpaceActions,
+    //{storeHistory:[],currentStore:0};
 
     createIncId:function(){
-    	return ++this.workVo.idCreater;
+    	//return ++this.workVo.idCreater;
+        var idx=this.workVo.idCreater+1;
+        this.workVo.set('idCreater',idx);
+        return idx;
     },
 
     onSelectSpace:function(id){
@@ -26,9 +31,41 @@ var WorkStore = Reflux.createStore({
         console.dir(project);
         if(project){
             ProjectActions.changeAction(project);
-            this.workVo.curProject=id;
+            this.workVo.set("curProject",id);
         }
         
+    },
+
+    onUndo: function(){
+        this.moveHistory(-1);        
+    },
+
+    onRedo: function(){
+        this.moveHistory(1);
+    },
+
+    moveHistory:function(dir){
+        var idx=this.state.currentStore + dir;
+        console.log('dengyp moveHistory:'+idx);
+        if(idx>=0&&idx<this.state.storeHistory.length){
+            this.state.currentStore=idx;
+            this.freezer.set( this.state.storeHistory[ idx] );
+            console.log('dengyp ............moveHistory:'+idx);            
+            //updateWorkVo();
+        }
+        
+    },
+
+    updateWorkVo:function(){
+        this.workVo=this.freezer.get();
+        this.trigger(this.workVo);
+        console.log('--------::: dengyp updateWorkVo :::--------------');
+        console.dir(this.workVo);
+
+        if(this.workVo.curProject>0){
+            global.ProjectActions.changeAction(this.findProject(this.workVo.curProject).project);
+        }
+        //global.QueueActions.changeQueue(this.workVo.queues);
     },
 
     onSaveSpace:function(evt){               
@@ -56,8 +93,7 @@ var WorkStore = Reflux.createStore({
         var str=fs.readFileSync(val, 'utf-8');
         var obj=JSON.parse(str);
         if(obj&&obj.space){
-            this.workVo.space=obj.space;            
-           this.trigger(this.workVo);
+            this.workVo.set("space",obj.space);            
         }
     },
 
@@ -69,7 +105,7 @@ var WorkStore = Reflux.createStore({
         if(obj&&obj.space){
             for(var key in obj.space){
                 var theSp=obj.space[key];
-                var sp=this.findSpace(theSp.id);
+                var sp=this.findSpace(theSp.name);
                 if(sp){
                     for(var k in theSp.projects){
                         sp.projects.push(global.cloneCreate(theSp.projects[k]));
@@ -78,7 +114,7 @@ var WorkStore = Reflux.createStore({
                     this.workVo.space.push(global.cloneCreate(theSp));
                 }
             }
-           this.trigger(this.workVo);
+           //this.trigger(this.workVo);
         }
     },
 
@@ -101,20 +137,43 @@ var WorkStore = Reflux.createStore({
                 this.workVo=JSON.parse(loadedList);
                 console.log('WorkStore.js init 2');
             }
+
             //后加的数据
             if(this.workVo.panels==undefined){
                 this.workVo.panels=window.cfgs.panelsTmp;
             }
             if(this.workVo.queues==undefined){
                  this.workVo.queues=window.cfgs.queuesTmp;
-            }
-
-            if(this.workVo.curProject>0){
-                global.ProjectActions.changeAction(this.findProject(this.workVo.curProject).project);
-            }
-            global.QueueActions.changeQueue(this.workVo.queues);
+            }            
 
             console.dir(this.workVo);
+            this.freezer = new Freezer(this.workVo)
+            this.state={storeHistory:[this.freezer.get()],currentStore:0};
+
+            var me=this;
+            this.freezer.on('update', function( updated ){                
+                var storeHistory, nextIndex;
+                console.log('.....update....');
+                // Check if this state has not been set by the history
+                if( updated != me.state.storeHistory[ me.state.currentStore ] ){
+     
+                    nextIndex = me.state.currentStore + 1;
+                    storeHistory = me.state.storeHistory.slice( 0, nextIndex );
+                    storeHistory.push( updated );
+     
+                    // Set the state will re-render our component
+                    me.state.currentStore=nextIndex;
+                    me.state.storeHistory=storeHistory;
+                    //me.freezer.set(updated);                    
+                    
+                    console.dir(me.state);
+                    me.updateWorkVo();
+                }
+                else {
+                    me.updateWorkVo();
+                }
+            });
+            this.updateWorkVo(); //不知道要不要的
 
             var ep=this.exportSpace;
             var ip=this.importSpace;
@@ -139,12 +198,16 @@ var WorkStore = Reflux.createStore({
         global.keyMgr.register('ctrl_s',this.onSaveSpace.bind(this));
 
         global.keyMgr.register('ctrl_b',this.onPublish.bind(this));
+        global.keyMgr.register('ctrl_z',this.onUndo.bind(this));
+        global.keyMgr.register('ctrl_y',this.onRedo.bind(this));
     },
 
     onPublish:function(){
         //这是只有我用的。快速导出数据的
         var file=path.join(window.indexPath,'../tmp/svn/export.data');
-        var vo=JSON.parse(JSON.stringify(this.workVo));
+        var file2=path.join(window.indexPath,'../tmp/export.data');
+        var str=JSON.stringify(this.workVo);
+        var vo=JSON.parse(str);
         var list=[];
         for(var i=0;i<vo.space.length;i++){
             if(vo.space[i].name!="BatWorker"){
@@ -154,6 +217,7 @@ var WorkStore = Reflux.createStore({
         vo.space=list;
 
         fs.writeFileSync(file, JSON.stringify(vo,null,4), 'utf-8');
+        fs.writeFileSync(file2, str, 'utf-8');
         window.log(".");
 
     },
@@ -174,10 +238,10 @@ var WorkStore = Reflux.createStore({
         return {};
     },
 
-    findSpace:function(id){
+    findSpace:function(name){
 
         var list=this.workVo.space;
-        let idx=_.findIndex(list, { 'id': id });
+        let idx=_.findIndex(list, { 'name': name });
         return list[idx];
     }
 

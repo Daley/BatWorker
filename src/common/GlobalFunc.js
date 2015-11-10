@@ -1,6 +1,8 @@
 var global=window;
 import LogView from '../components/util/LogView.js'
 import JobQueueView from '../components/body/JobQueueView.js'
+import CutView from '../components/body/CutView.js'
+
 var _ = require('lodash');
 
 global.getPanelByType=function(type){
@@ -8,6 +10,8 @@ global.getPanelByType=function(type){
         return JobQueueView;
     }else if(type=="logView"){
         return LogView;
+    }else if(type=="cutView"){
+        return CutView;
     }
     return null;
 }
@@ -17,6 +21,8 @@ global.getPanelNameByType=function(type){
         return '执行队列';
     }else if(type=="logView"){
         return '日志';
+    }else if(type==""){
+        return 'sss'
     }
     return '未定义';
 }

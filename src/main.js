@@ -21,6 +21,7 @@ global.SpaceActions=Reflux.createActions(AppCfgs.spaceActions);
 global.ProjectActions=Reflux.createActions(AppCfgs.projectActions);
 global.QueueActions=Reflux.createActions(AppCfgs.queueActions);
 global.LogActions=Reflux.createActions(AppCfgs.logActions);
+global.CutViewActions=Reflux.createActions(AppCfgs.cutViewActions);
 
 global.lang=require("./cfg/LangCfg.js");
 global.keyMgr=require("./common/KeyMgr.js");
@@ -30,6 +31,7 @@ global.WorkStore=require("./stores/WorkStore.js");
 global.ProjectStore=require("./stores/ProjectStore.js");
 global.QueueStore=require("./stores/QueueStore.js");
 global.LogStore=require("./stores/LogStore.js");
+global.CutViewStore=require("./stores/CutViewStore.js");
 
 global.popMgr=require("./common/PopMgr.js");
 global.popMgr.init(document.getElementById('pop_layer'))
@@ -84,6 +86,9 @@ React.render(<PopGroup/>,document.getElementById('panel_layer'));
 
 //panels
 var panels=global.WorkStore.workVo.panels;
+if(panels.length==2){
+    panels.push(global.cfgs.panelsTmp[2]);
+}
 console.dir(panels);
 var func=function(){
     panels.map(function(item){
@@ -100,4 +105,23 @@ var func=function(){
 
 func();
 //setTimeout(func, 2000);
+
+/*
+var Freezer = require('freezer-js');
+var freezer = new Freezer({
+    a: {x: 1, y: 2, z: [0, 1, 2] },
+    b: [ 5, 6, 7 , { m: 1, n: 2 } ],
+    c: 'Hola',
+    d: null // It is possible to store whatever
+});
+
+var state = freezer.get();
+
+freezer.on('update', function( newValue ){    
+    console.log( 'ddddddddddddddddd I was updated' );
+});
+
+var updated = state.set( 'e', 4 ); // On next tick it will log 'I was updated'
+console.log('fffffffffffffffffffffffffffffffffffffffffffffffffffff');
+console.dir(state);*/
 

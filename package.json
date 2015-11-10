@@ -42,7 +42,8 @@
     "rc-dialog":"5.0.3",
     "Q":"1.4.1",
     "copy-dir":"0.0.7",
-    "cp-file":"2.2.1"
+    "cp-file":"3.0.1",
+    "freezer-js":"0.9.4"
   },
   "author": "Daley"
 }

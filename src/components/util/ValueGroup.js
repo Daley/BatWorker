@@ -29,6 +29,12 @@ class DefaultItem extends Component{
         }        
     }
 
+    //非常重要，干掉影响性能
+    shouldComponentUpdate( nextProps, nextState ){
+        //return true;
+        return nextProps.data != this.props.data;
+    }
+
     render(){
         var item=this.props.data;
         
@@ -120,6 +126,10 @@ const dupTip = (
 
 const numTip = (
   <Tooltip><strong>当前选中项的下标,点击归-1</strong></Tooltip>
+);
+
+const jsonTip = (
+  <Tooltip><strong>当前列表数据输出JSON</strong></Tooltip>
 );
 
 class ValueGroup extends Component {
@@ -224,10 +234,16 @@ class ValueGroup extends Component {
         console.dir(this);
         //console.log(React.renderToString(this));
        //global.CutViewActions.cutView(React.renderToString(<ValueGroup {...this.props}/>));
-       global.CutViewActions.cutView(JSON.stringify(this.props.list,null,"\n"));
+       global.CutViewActions.cutView(JSON.stringify(this.props.list,null,4));
        //console.log(JSON.stringify(this.props.list,null,4));
        
        //global.CutViewActions.cutView(React.addons.cloneWithProps(this));
+    }
+
+    //非常重要，干掉影响性能
+    shouldComponentUpdate( nextProps, nextState ){
+        //return true;
+        return nextProps.list != this.props.list;
     }
     /*
 <OverlayTrigger placement="top" overlay={numTip}>
@@ -258,7 +274,7 @@ class ValueGroup extends Component {
                     <OverlayTrigger placement="top" overlay={numTip}>
 			        <Button bsSize="small" onClick={this.onClearSelect.bind(this)} ref='numBtn'>{this.state.selectIdx}</Button></OverlayTrigger>
 
-                    
+                    <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>J</Button>
 			      </ButtonGroup>
 			      		      
     			</ButtonToolbar>
@@ -268,6 +284,9 @@ class ValueGroup extends Component {
     }
 
     render(){
+        if(this.props.header){
+            console.log('::--------------render:'+this.props.header);
+        }
 
        var ps=_.assign({},this.props,{onSelectChange:this.onSelectChange.bind(this)});
         if(this.props.renderClazz){

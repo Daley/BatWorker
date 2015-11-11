@@ -9,7 +9,7 @@ class CutView extends Component{
 	constructor() {
 		super();
 		
-        this.state= {view:(<div/>)};
+        this.state= {view:""};
 	}
 
 	componentDidMount() {
@@ -21,7 +21,7 @@ class CutView extends Component{
     }
 
     onClean(){
-
+		global.CutViewActions.cutView("");
     }
 
     onModelChange(model) {
@@ -46,13 +46,10 @@ class CutView extends Component{
 
 	render(){
 
-		
+		console.log('cut cut cut '+this.state.view);
+		var obj={height: 300,width:290};
 		return <div> <Button bsSize="small" onClick={this.onClean.bind(this)}>清理</Button>
-			<textarea>
-			{
-				
-				this.state.view
-			}
+			<textarea style={obj} value={this.state.view}>
 			</textarea>
 		</div>
 		//return <textarea cols="20" rows="3">{this.state.log}</textarea>

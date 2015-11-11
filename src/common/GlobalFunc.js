@@ -21,8 +21,8 @@ global.getPanelNameByType=function(type){
         return '执行队列';
     }else if(type=="logView"){
         return '日志';
-    }else if(type==""){
-        return 'sss'
+    }else if(type=="cutView"){
+        return 'JSON'
     }
     return '未定义';
 }

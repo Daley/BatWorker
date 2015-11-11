@@ -163,23 +163,30 @@
 	_react2['default'].render(_react2['default'].createElement(_componentsUtilPopGroupJs2['default'], null), document.getElementById('panel_layer'));
 
 	//panels
-	var panels = global.WorkStore.workVo.panels;
-	if (panels.length == 2) {
-	    panels.push(global.cfgs.panelsTmp[2]);
-	}
-	console.dir(panels);
-	var func = function func() {
-	    panels.map(function (item) {
-	        //传的是引用 ，改了就改了
-	        global.showPop({
-	            isFloat: true, vo: item,
-	            clazz: global.getPanelByType(item.panel_id),
-	            header: global.getPanelNameByType(item.panel_id)
+	var showAllPanels = function showAllPanels() {
+	    var panels = global.WorkStore.workVo.panels;
+	    if (panels.length == 2) {
+	        panels.push(global.cfgs.panelsTmp[2]);
+	    }
+	    console.dir(panels);
+	    global.clearPop();
+
+	    var func = function func() {
+	        panels.map(function (item) {
+	            //传的是引用 ，改了就改了
+	            global.showPop({
+	                isFloat: true, vo: item,
+	                clazz: global.getPanelByType(item.panel_id),
+	                header: global.getPanelNameByType(item.panel_id)
+	            });
 	        });
-	    });
+	    };
+	    func();
 	};
 
-	func();
+	//global.WorkStore.freezer.on("update",showAllPanels);
+	showAllPanels();
+
 	//setTimeout(func, 2000);
 
 	/*
@@ -38292,7 +38299,7 @@
 
 	AppCfgs.logActions = ['addLog', 'cleanLog'];
 
-	AppCfgs.cutViewActions = ['cutView'];
+	AppCfgs.cutViewActions = ['cutView', 'clearCut'];
 
 	AppCfgs.projectActions = ['changeAction'];
 
@@ -48129,6 +48136,14 @@
 	                this.props.onSelectChange(this.props.idx);
 	            }
 	        }
+
+	        //非常重要，干掉影响性能
+	    }, {
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate(nextProps, nextState) {
+	            //return true;
+	            return nextProps.data != this.props.data;
+	        }
 	    }, {
 	        key: 'render',
 	        value: function render() {
@@ -48291,6 +48306,16 @@
 	    )
 	);
 
+	var jsonTip = _react2['default'].createElement(
+	    Tooltip,
+	    null,
+	    _react2['default'].createElement(
+	        'strong',
+	        null,
+	        '当前列表数据输出JSON'
+	    )
+	);
+
 	var ValueGroup = (function (_Component3) {
 	    _inherits(ValueGroup, _Component3);
 
@@ -48430,10 +48455,18 @@
 	            console.dir(this);
 	            //console.log(React.renderToString(this));
 	            //global.CutViewActions.cutView(React.renderToString(<ValueGroup {...this.props}/>));
-	            global.CutViewActions.cutView(JSON.stringify(this.props.list, null, "\n"));
+	            global.CutViewActions.cutView(JSON.stringify(this.props.list, null, 4));
 	            //console.log(JSON.stringify(this.props.list,null,4));
 
 	            //global.CutViewActions.cutView(React.addons.cloneWithProps(this));
+	        }
+
+	        //非常重要，干掉影响性能
+	    }, {
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate(nextProps, nextState) {
+	            //return true;
+	            return nextProps.list != this.props.list;
 	        }
 
 	        /*
@@ -48509,6 +48542,11 @@
 	                                { bsSize: 'small', onClick: this.onClearSelect.bind(this), ref: 'numBtn' },
 	                                this.state.selectIdx
 	                            )
+	                        ),
+	                        _react2['default'].createElement(
+	                            Button,
+	                            { bsSize: 'small', onClick: this.onCutViewSelect.bind(this), ref: 'cutBtn' },
+	                            'J'
 	                        )
 	                    )
 	                )
@@ -48517,6 +48555,9 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            if (this.props.header) {
+	                console.log('::--------------render:' + this.props.header);
+	            }
 
 	            var ps = _.assign({}, this.props, { onSelectChange: this.onSelectChange.bind(this) });
 	            if (this.props.renderClazz) {
@@ -63338,6 +63379,12 @@
 				this.update();
 			}
 		}, {
+			key: 'clearPop',
+			value: function clearPop() {
+				this.state.pops = [];
+				this.update();
+			}
+		}, {
 			key: 'onCallback',
 			value: function onCallback(idx, isOk) {
 				var obj = this.state.pops[idx];
@@ -63361,6 +63408,8 @@
 				var pops = this.state.pops;
 				//变态
 				global.showPop = this.showPop.bind(this);
+				global.clearPop = this.clearPop.bind(this);
+
 				var onCallBack = this.onCallback.bind(this);
 
 				return _react2['default'].createElement(
@@ -63449,6 +63498,16 @@
 						'h5',
 						null,
 						'Ctrl+R 运行队列或你最后运行的项目'
+					),
+					_react2['default'].createElement(
+						'h5',
+						null,
+						'Ctrl+Z 撤消'
+					),
+					_react2['default'].createElement(
+						'h5',
+						null,
+						'Ctrl+Y 重做'
 					),
 					_react2['default'].createElement(
 						'h5',
@@ -66006,7 +66065,11 @@
 	            this.freezer.set(this.state.storeHistory[idx]);
 	            console.log('dengyp ............moveHistory:' + idx);
 	            //updateWorkVo();
-	        }
+	        } else if (idx < 0) {
+	                global.log("历史记录：不能再撤了");
+	            } else if (idx > this.state.storeHistory.length) {
+	                global.log("历史记录：不能再前进了");
+	            }
 	    },
 
 	    updateWorkVo: function updateWorkVo() {
@@ -67615,7 +67678,7 @@
 	var Reflux = __webpack_require__(1);
 	var global = window;
 
-	var defaultModel = _react2['default'].createElement('div', null);
+	var defaultModel = '';
 
 	var CutViewStore = Reflux.createStore({
 	    model: defaultModel,
@@ -67901,8 +67964,8 @@
 	        return '执行队列';
 	    } else if (type == "logView") {
 	        return '日志';
-	    } else if (type == "") {
-	        return 'sss';
+	    } else if (type == "cutView") {
+	        return 'JSON';
 	    }
 	    return '未定义';
 	};
@@ -68337,7 +68400,7 @@
 
 			_get(Object.getPrototypeOf(CutView.prototype), 'constructor', this).call(this);
 
-			this.state = { view: _react2['default'].createElement('div', null) };
+			this.state = { view: "" };
 		}
 
 		_createClass(CutView, [{
@@ -68352,7 +68415,9 @@
 			}
 		}, {
 			key: 'onClean',
-			value: function onClean() {}
+			value: function onClean() {
+				global.CutViewActions.cutView("");
+			}
 		}, {
 			key: 'onModelChange',
 			value: function onModelChange(model) {
@@ -68383,6 +68448,8 @@
 			key: 'render',
 			value: function render() {
 
+				console.log('cut cut cut ' + this.state.view);
+				var obj = { height: 300, width: 290 };
 				return _react2['default'].createElement(
 					'div',
 					null,
@@ -68392,11 +68459,7 @@
 						{ bsSize: 'small', onClick: this.onClean.bind(this) },
 						'清理'
 					),
-					_react2['default'].createElement(
-						'textarea',
-						null,
-						this.state.view
-					)
+					_react2['default'].createElement('textarea', { style: obj, value: this.state.view })
 				);
 				//return <textarea cols="20" rows="3">{this.state.log}</textarea>
 				//return <p>{this.state.log}</p>
@@ -69064,6 +69127,14 @@
 	            };
 
 	            global.showPop(ps);
+	        }
+
+	        //非常重要，干掉影响性能
+	    }, {
+	        key: 'shouldComponentUpdate',
+	        value: function shouldComponentUpdate(nextProps, nextState) {
+	            //return true;
+	            return nextProps.data != this.props.data;
 	        }
 	    }, {
 	        key: 'render',

@@ -157,7 +157,13 @@ class JobItem extends Component{
         }
 
        global.showPop(ps);
-    }   
+    }
+
+    //非常重要，干掉影响性能
+    shouldComponentUpdate( nextProps, nextState ){
+        //return true;
+        return nextProps.data != this.props.data;
+    }
 
     render(){
         var item=this.props.data;        

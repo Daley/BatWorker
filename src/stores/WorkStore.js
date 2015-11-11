@@ -52,6 +52,10 @@ var WorkStore = Reflux.createStore({
             this.freezer.set( this.state.storeHistory[ idx] );
             console.log('dengyp ............moveHistory:'+idx);            
             //updateWorkVo();
+        }else if(idx<0){
+            global.log("历史记录：不能再撤了")
+        }else if(idx>this.state.storeHistory.length){
+            global.log("历史记录：不能再前进了")
         }
         
     },

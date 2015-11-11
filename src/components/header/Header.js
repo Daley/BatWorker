@@ -23,6 +23,8 @@ class HeaderView extends Component{
 					<h2>快捷键</h2>
 					<h5>Ctrl+S 保存</h5>
 					<h5>Ctrl+R 运行队列或你最后运行的项目</h5>
+					<h5>Ctrl+Z 撤消</h5>
+					<h5>Ctrl+Y 重做</h5>
 					<h5>Ctrl+H 本帮助</h5>
 					<hr />
 					<h2>balalalala</h2>

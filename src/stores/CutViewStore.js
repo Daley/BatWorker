@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 var Reflux = require('reflux');
 var global = window;
 
-var defaultModel = (<div/>);
+var defaultModel = '';
 
 var CutViewStore = Reflux.createStore({
     model: defaultModel,
@@ -13,7 +13,7 @@ var CutViewStore = Reflux.createStore({
     onCutView: function(view) {
     	this.model=view;
         this.trigger(this.model);
-    }    
+    }
 
 });
 

@@ -32,7 +32,7 @@ var ProjectView = React.createClass({
 
     onModelChange: function(model) {
         console.log('dengyp ProjectStore.onModelChange');
-        this.setState(model);
+        this.setState(model);        
     },
 
     renderVarList:function(){

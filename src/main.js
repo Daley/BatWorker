@@ -85,25 +85,32 @@ React.render(<Main/>, document.getElementById('content'));
 React.render(<PopGroup/>,document.getElementById('panel_layer'));
 
 //panels
-var panels=global.WorkStore.workVo.panels;
-if(panels.length==2){
-    panels.push(global.cfgs.panelsTmp[2]);
-}
-console.dir(panels);
-var func=function(){
-    panels.map(function(item){
-        //传的是引用 ，改了就改了
-        global.showPop(
-            {
-                isFloat:true,vo:item,
-                clazz:global.getPanelByType(item.panel_id),
-                header:global.getPanelNameByType(item.panel_id)
-            }
-            );
-    })
+var showAllPanels=function(){
+    var panels=global.WorkStore.workVo.panels;
+    if(panels.length==2){
+        panels.push(global.cfgs.panelsTmp[2]);
+    }
+    console.dir(panels);
+    global.clearPop();
+
+    var func=function(){
+        panels.map(function(item){
+            //传的是引用 ，改了就改了
+            global.showPop(
+                {
+                    isFloat:true,vo:item,
+                    clazz:global.getPanelByType(item.panel_id),
+                    header:global.getPanelNameByType(item.panel_id)
+                }
+                );
+        })
+    }
+    func();
 }
 
-func();
+//global.WorkStore.freezer.on("update",showAllPanels);
+showAllPanels();
+
 //setTimeout(func, 2000);
 
 /*

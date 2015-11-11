@@ -29,7 +29,8 @@ AppCfgs.logActions=[
 ]
 
 AppCfgs.cutViewActions=[
-	'cutView'
+	'cutView',
+	'clearCut'
 ]
 
 AppCfgs.projectActions=[

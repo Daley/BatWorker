@@ -140,6 +140,11 @@ class PopGroup extends Component{
 		this.update();
 	}
 
+	clearPop(){
+		this.state.pops=[];
+		this.update();
+	}
+
 	onCallback(idx,isOk){
 		var obj=this.state.pops[idx];
 		if(isOk){
@@ -160,6 +165,8 @@ class PopGroup extends Component{
 		var pops=this.state.pops;
 		//变态
 		global.showPop=this.showPop.bind(this);
+		global.clearPop=this.clearPop.bind(this);
+
 		var onCallBack=this.onCallback.bind(this);
 
 		return(<div>

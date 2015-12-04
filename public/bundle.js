@@ -50822,6 +50822,9 @@
 	    dom.keypress(this.onPress.bind(this));
 	    dom.blur(this.save.bind(this));
 	    dom.focus(this.focusIn.bind(this));
+	    //dom.val(this.props.val);
+	    //global.log(this.props.val);
+	    //console.dir(dom);
 
 	    return;
 	    var dom = $(React.findDOMNode(this.refs.editableElement));
@@ -50857,6 +50860,15 @@
 	    }
 	  },
 
+	  updateTxt: function updateTxt() {
+	    var dom = $(React.findDOMNode(this.refs.txt));
+
+	    // dom.keypress(this.onPress.bind(this));
+	    //dom.blur(this.save.bind(this));
+	    //dom.focus(this.focusIn.bind(this));
+	    dom.val(this.props.val);
+	  },
+
 	  //{...this.props}
 	  render: function render() {
 	    var ps = this.props;
@@ -50869,10 +50881,10 @@
 	    var refStr = "#" + Math.random();
 	    //var set=this.setState.bind(this);
 	    //setTimeout(this.componentDidMount.bind(this), 100);
-	    /*
-	    setTimeout(function(){
-	      set({ran:Math.random()});        
-	    }, 100*Math.random());*/
+
+	    // setTimeout(this.updateTxt.bind(this), 10);
+
+	    //global.log("render:"+this.props.val);
 	    var obj = {
 	      "border-top": "0px",
 	      "border-left": "0px",
@@ -50883,7 +50895,7 @@
 	    return(
 
 	      //<Input ref="txt" type="dymamic" value={val}></Input> onkeypress={this.onPress.bind(this)}
-	      React.createElement('input', { type: 'text', style: obj, ref: 'txt', defaultValue: val })
+	      React.createElement('input', { type: 'text', style: obj, ref: 'txt', value: val })
 	      /*
 	      return (
 	          <a href="#"

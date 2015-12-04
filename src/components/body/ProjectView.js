@@ -35,7 +35,17 @@ var ProjectView = React.createClass({
         this.setState(model);        
     },
 
+    //非常重要，干掉影响性能
+    shouldComponentUpdate( nextProps, nextState ){
+        //return true;
+        //console.dir(nextState);
+        //console.dir(this.state);
+       // console.log(nextState!=this.state);
+        return nextState != this.state;
+    },
+
     renderVarList:function(){
+        //global.log('################ renderVarList');
         var vo=this.state;
         var ps={};
         ps.list=vo.vars;
@@ -103,13 +113,15 @@ var ProjectView = React.createClass({
     },
 
     render: function() {
+        //window.log("ProjectView.js render");
+         //{this.renderJobList()}{this.renderJobList()}
         var vo=this.state;
         return (
             <Panel {...this.props} header={"项目"+'--'+vo.name} bsStyle="info"> 
                 <Grid>                         
                     {this.renderVarList()}                
+                   {this.renderJobList()}
                    
-                    {this.renderJobList()}
                 </Grid>          
             </Panel>
             );

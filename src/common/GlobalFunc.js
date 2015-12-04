@@ -11,7 +11,8 @@ global.getPanelByType=function(type){
     }else if(type=="logView"){
         return LogView;
     }else if(type=="cutView"){
-        return CutView;
+        return null;
+        //return CutView;
     }
     return null;
 }

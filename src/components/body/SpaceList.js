@@ -30,7 +30,7 @@ const runTip = (
 var ProjectItem=React.createClass({
     changeName:function(kev,value){
         var vo=this.props.data;
-        vo.name=value;
+        vo.set("name",value);
     },
 
     onSelect:function(){
@@ -112,7 +112,7 @@ var SpaceItem=React.createClass({
 
   changeName:function(id,value){
         var vo = this.props.data;
-        vo.name=value;
+        vo.set("name",value);
   },
 
   render: function () {
@@ -122,10 +122,10 @@ var SpaceItem=React.createClass({
     //console.dir(this.props);
     return (
       <div className="SpaceNav">
-        <h3 className={this.buildToggleClassName()}>
+        <h4 className={this.buildToggleClassName()}>
             <Button bsSize="small" onClick={this.toggle}><Glyphicon glyph={icon} /></Button>
             <XEditableText id='space_name' title='空间名称' val={vo.name} onChange={this.changeName}/>
-        </h3>
+        </h4>
         {this.renderItems()}
       </div>
     );

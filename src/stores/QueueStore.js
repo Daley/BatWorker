@@ -21,8 +21,15 @@ var QueueStore = Reflux.createStore({
 
     onRunLast:function(){
         global.log("dengyp onRunLast"+this.lastProject);
+        var vo=global.ProjectStore.model;
+ 
         if(this.lastProject==-1){
-            this.onRunQueue();
+            if(vo){
+                 this.onRunJob(vo.id); 
+             }else{
+                this.onRunQueue();
+             }
+           
         }else{
             this.onRunJob(this.lastProject); 
         }
@@ -30,11 +37,13 @@ var QueueStore = Reflux.createStore({
     },
 
     onChangeQueue: function(list) {
+        //global.log("changeQueue");
     	this.model=list;
         this.trigger(this.model);
     },
 
     onAddToQueue:function(id){
+        global.log("addToQueue:",id);
         if(this.model.indexOf(id)!=-1){
             window.log("已经存在于队列");
             return;
@@ -196,7 +205,10 @@ var QueueStore = Reflux.createStore({
     },
 
     onCleanAll:function(){
-        _.remove(this.model);
+        //_.remove(this.model);
+        while(this.model.length>0){
+            this.model=this.model.splice(0, 1);
+        }
         this.onChangeQueue(this.model);
     }
 

@@ -12,14 +12,17 @@ class DefaultItem extends Component{
     onChange(key,val){
         var vo=this.props.data;
         //vo[key]=val;
-        //console.log('...............DefaultItem................');
+        //console.log('...............');
         //console.dir(vo);
        // console.log('k-v:'+key+'-'+val);
         //if(vo.hasOwnProperty('set')){
-            vo.set(key,val);
+            setTimeout(function(){
+                vo.set(key,val);
+            }, 50);            
         //}else{
          //   vo[key]=val;
         //}
+        
         
     }
 
@@ -35,9 +38,28 @@ class DefaultItem extends Component{
         return nextProps.data != this.props.data;
     }
 
+    runTest(){
+        if(this.testId>0){
+            return;
+        }
+        var inc=0;
+        var key="val";
+        this.testId=setInterval(function(){
+            if(inc>1116){
+                return;
+            }
+            var vo=this.props.data;
+            vo.set(key,""+Math.random());
+            inc++;
+
+        }.bind(this), 100);
+    }
+
     render(){
         var item=this.props.data;
-        
+        //global.log('...............DefaultItem................');
+        //this.runTest();
+
         var wh=1;
         var arr=[<Col    xs={ wh }                             
                              sm={ wh }
@@ -120,8 +142,12 @@ const removeTip = (
  <Tooltip><strong>移除当前元素</strong></Tooltip>
 );
 
-const dupTip = (
+const copyTip = (
  <Tooltip><strong>复制当前元素</strong></Tooltip>
+);
+
+const pasteTip = (
+ <Tooltip><strong>粘贴当前元素到当前索引，为-1在最后</strong></Tooltip>
 );
 
 const numTip = (
@@ -198,6 +224,30 @@ class ValueGroup extends Component {
 		this.onDataChange();
 	}
 
+    onCopy(){
+        //console.log("dengyp ValueGroup onDuplicate");
+        if(this.checkSelectItem()==false){
+            return;
+        }
+        var {list,idx}=this.getListAndIdx();
+            //list.push(global.cloneCreate(list[idx]));
+        global.__copyItem=global.cloneCreate(list[idx]);        
+    }
+
+    onPaste(){
+       
+        if(global.__copyItem==null){
+            global.log('没有复制任何项');
+            return;
+        }
+        var {list,idx}=this.getListAndIdx();
+        if(idx==-1){
+            list.push(global.cloneCreate(global.__copyItem));
+        }else{
+            list.splice(idx, 0, global.cloneCreate(global.__copyItem));
+        }
+    }
+
 	onSelectChange(idx){
         this.state.selectIdx=idx;
         //React.render(this.renderHeaderCont(),React.findDOMNode(this.refs.header));
@@ -228,13 +278,11 @@ class ValueGroup extends Component {
     }
 
     onCutViewSelect(){
-        console.log('fuck onCutViewSelect');
-        console.log('dengyp check',React.isValidElement(ValueGroup));
-        console.log('dengyp check',React.isValidElement(numTip));
-        console.dir(this);
-        //console.log(React.renderToString(this));
+       //console.log(React.renderToString(this));
        //global.CutViewActions.cutView(React.renderToString(<ValueGroup {...this.props}/>));
-       global.CutViewActions.cutView(JSON.stringify(this.props.list,null,4));
+       var str=JSON.stringify(this.props.list,null,2);
+      
+       global.CutViewActions.cutView(str);
        //console.log(JSON.stringify(this.props.list,null,4));
        
        //global.CutViewActions.cutView(React.addons.cloneWithProps(this));
@@ -249,7 +297,7 @@ class ValueGroup extends Component {
 <OverlayTrigger placement="top" overlay={numTip}>
                     <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>v</Button></OverlayTrigger>
 
-                    <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>v</Button>
+                    <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>J</Button>
     */
 
     renderHeader(){
@@ -269,13 +317,17 @@ class ValueGroup extends Component {
 			        <Button bsSize="small" onClick={this.onAdd.bind(this)} ref="addBtn"  disabled={disableCreate}><Glyphicon glyph="plus" /> </Button></OverlayTrigger>
 			        <OverlayTrigger placement="top" overlay={removeTip}>
                     <Button bsSize="small" onClick={this.onRemove.bind(this)} ref="removeBtn" ><Glyphicon glyph="minus"  /> </Button></OverlayTrigger>
-                    <OverlayTrigger placement="top" overlay={dupTip}>
-			        <Button bsSize="small" onClick={this.onDuplicate.bind(this)} ref="dupBtn" disabled={disableCreate}><Glyphicon glyph="duplicate"/> </Button></OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={copyTip}>
+			        <Button bsSize="small" onClick={this.onCopy.bind(this)} ref="cpBtn" disabled={disableCreate}><Glyphicon glyph="duplicate"/> </Button></OverlayTrigger>
+
+                     <OverlayTrigger placement="top" overlay={pasteTip}>
+                    <Button bsSize="small" onClick={this.onPaste.bind(this)} ref="dupBtn" disabled={disableCreate}><Glyphicon glyph="paste"/> </Button></OverlayTrigger>
+
                     <OverlayTrigger placement="top" overlay={numTip}>
 			        <Button bsSize="small" onClick={this.onClearSelect.bind(this)} ref='numBtn'>{this.state.selectIdx}</Button></OverlayTrigger>
 
-                    <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>J</Button>
-			      </ButtonGroup>
+                    
+			      </ButtonGroup>                  
 			      		      
     			</ButtonToolbar>
     			

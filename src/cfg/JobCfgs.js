@@ -26,7 +26,8 @@ jobs.clearDirTmp={
 				exec( 'RMDIR /S /Q ' + path, function ( err, stdout, stderr ){
 				  if(err){
 				  	global.log(err);
-				  	reject(err);
+				  	resolve("失败删除目录");
+				  	//reject(err);
 				  }else{
 				  	resolve("成功删除目录");
 				  }
@@ -125,7 +126,7 @@ jobs.combinXmlTmp={
 		desc:'描述',
 		saveAs:'另存为',
 		xmls:'文件列表 第一个为主文件',
-		nodes:'节点列表 如application.test'
+		nodes_d:'节点列表 如application.test'
 	},
 	exec:function(vo,vars){
 		if(vo.xmls.length<2){
@@ -157,6 +158,12 @@ jobs.combinXmlTmp={
 				//console.dir(result);
 				var data=fs.readFileSync(url,'utf8');
 				var xml=dealData(data);
+				vo.nodes=[     "uses-permission",
+                                "application.activity",
+                                "application.meta-data",
+                                "application.receiver",
+                                "application.service"
+                            ];
 				//console.dir(xml);
 				for(var i=0;i<vo.nodes.length;i++){
 					var arr=vo.nodes[i].split(".");
@@ -191,7 +198,7 @@ jobs.combinXmlTmp={
     	return q.then(function(result){
 
     		var str=(new XMLSerializer()).serializeToString(result);
-    		str=str.replace(/\/\>\</g,"/>\n<");
+    		str=str.replace(/\/\>\</g,"/>\n<");//str=str.replace(/\>\</g,">\n\t<");
     		console.log('combinXml result');
     		console.dir(result);
 			fs.writeFileSync(vo.saveAs,str,"utf8");

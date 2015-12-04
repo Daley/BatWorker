@@ -128,7 +128,6 @@
 	        return _react2['default'].createElement(
 	            'div',
 	            null,
-	            _react2['default'].createElement(_componentsHeaderHeaderJs2['default'], null),
 	            _react2['default'].createElement(
 	                _reactBootstrap.Grid,
 	                { fluid: true },
@@ -174,9 +173,13 @@
 	    var func = function func() {
 	        panels.map(function (item) {
 	            //传的是引用 ，改了就改了
+	            var cz = global.getPanelByType(item.panel_id);
+	            if (cz == null) {
+	                return;
+	            }
 	            global.showPop({
 	                isFloat: true, vo: item,
-	                clazz: global.getPanelByType(item.panel_id),
+	                clazz: cz,
 	                header: global.getPanelNameByType(item.panel_id)
 	            });
 	        });
@@ -38479,10 +38482,11 @@
 					_exec('RMDIR /S /Q ' + path, function (err, stdout, stderr) {
 						if (err) {
 							global.log(err);
-							reject(err);
+							resolve("失败删除目录");
+							//reject(err);
 						} else {
-							resolve("成功删除目录");
-						}
+								resolve("成功删除目录");
+							}
 					});
 				};
 				return Q.Promise(call);
@@ -38578,7 +38582,7 @@
 			desc: '描述',
 			saveAs: '另存为',
 			xmls: '文件列表 第一个为主文件',
-			nodes: '节点列表 如application.test'
+			nodes_d: '节点列表 如application.test'
 		},
 		exec: function exec(vo, vars) {
 			if (vo.xmls.length < 2) {
@@ -38610,6 +38614,7 @@
 					//console.dir(result);
 					var data = fs.readFileSync(url, 'utf8');
 					var xml = dealData(data);
+					vo.nodes = ["uses-permission", "application.activity", "application.meta-data", "application.receiver", "application.service"];
 					//console.dir(xml);
 					for (var i = 0; i < vo.nodes.length; i++) {
 						var arr = vo.nodes[i].split(".");
@@ -38643,7 +38648,7 @@
 			return q.then(function (result) {
 
 				var str = new XMLSerializer().serializeToString(result);
-				str = str.replace(/\/\>\</g, "/>\n<");
+				str = str.replace(/\/\>\</g, "/>\n<"); //str=str.replace(/\>\</g,">\n\t<");
 				console.log('combinXml result');
 				console.dir(result);
 				fs.writeFileSync(vo.saveAs, str, "utf8");
@@ -48119,11 +48124,13 @@
 	        value: function onChange(key, val) {
 	            var vo = this.props.data;
 	            //vo[key]=val;
-	            //console.log('...............DefaultItem................');
+	            //console.log('...............');
 	            //console.dir(vo);
 	            // console.log('k-v:'+key+'-'+val);
 	            //if(vo.hasOwnProperty('set')){
-	            vo.set(key, val);
+	            setTimeout(function () {
+	                vo.set(key, val);
+	            }, 50);
 	            //}else{
 	            //   vo[key]=val;
 	            //}
@@ -48145,9 +48152,28 @@
 	            return nextProps.data != this.props.data;
 	        }
 	    }, {
+	        key: 'runTest',
+	        value: function runTest() {
+	            if (this.testId > 0) {
+	                return;
+	            }
+	            var inc = 0;
+	            var key = "val";
+	            this.testId = setInterval((function () {
+	                if (inc > 1116) {
+	                    return;
+	                }
+	                var vo = this.props.data;
+	                vo.set(key, "" + Math.random());
+	                inc++;
+	            }).bind(this), 100);
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var item = this.props.data;
+	            //global.log('...............DefaultItem................');
+	            //this.runTest();
 
 	            var wh = 1;
 	            var arr = [_react2['default'].createElement(
@@ -48286,13 +48312,23 @@
 	    )
 	);
 
-	var dupTip = _react2['default'].createElement(
+	var copyTip = _react2['default'].createElement(
 	    Tooltip,
 	    null,
 	    _react2['default'].createElement(
 	        'strong',
 	        null,
 	        '复制当前元素'
+	    )
+	);
+
+	var pasteTip = _react2['default'].createElement(
+	    Tooltip,
+	    null,
+	    _react2['default'].createElement(
+	        'strong',
+	        null,
+	        '粘贴当前元素到当前索引，为-1在最后'
 	    )
 	);
 
@@ -48410,6 +48446,42 @@
 	            this.onDataChange();
 	        }
 	    }, {
+	        key: 'onCopy',
+	        value: function onCopy() {
+	            //console.log("dengyp ValueGroup onDuplicate");
+	            if (this.checkSelectItem() == false) {
+	                return;
+	            }
+
+	            var _getListAndIdx5 = this.getListAndIdx();
+
+	            var list = _getListAndIdx5.list;
+	            var idx = _getListAndIdx5.idx;
+
+	            //list.push(global.cloneCreate(list[idx]));
+	            global.__copyItem = global.cloneCreate(list[idx]);
+	        }
+	    }, {
+	        key: 'onPaste',
+	        value: function onPaste() {
+
+	            if (global.__copyItem == null) {
+	                global.log('没有复制任何项');
+	                return;
+	            }
+
+	            var _getListAndIdx6 = this.getListAndIdx();
+
+	            var list = _getListAndIdx6.list;
+	            var idx = _getListAndIdx6.idx;
+
+	            if (idx == -1) {
+	                list.push(global.cloneCreate(global.__copyItem));
+	            } else {
+	                list.splice(idx, 0, global.cloneCreate(global.__copyItem));
+	            }
+	        }
+	    }, {
 	        key: 'onSelectChange',
 	        value: function onSelectChange(idx) {
 	            this.state.selectIdx = idx;
@@ -48427,10 +48499,10 @@
 	                this.props.onChange(this.props.list);
 	            }
 
-	            var _getListAndIdx5 = this.getListAndIdx();
+	            var _getListAndIdx7 = this.getListAndIdx();
 
-	            var list = _getListAndIdx5.list;
-	            var idx = _getListAndIdx5.idx;
+	            var list = _getListAndIdx7.list;
+	            var idx = _getListAndIdx7.idx;
 
 	            if (idx >= list.length) {
 	                idx = -1;
@@ -48449,13 +48521,11 @@
 	    }, {
 	        key: 'onCutViewSelect',
 	        value: function onCutViewSelect() {
-	            console.log('fuck onCutViewSelect');
-	            console.log('dengyp check', _react2['default'].isValidElement(ValueGroup));
-	            console.log('dengyp check', _react2['default'].isValidElement(numTip));
-	            console.dir(this);
 	            //console.log(React.renderToString(this));
 	            //global.CutViewActions.cutView(React.renderToString(<ValueGroup {...this.props}/>));
-	            global.CutViewActions.cutView(JSON.stringify(this.props.list, null, 4));
+	            var str = JSON.stringify(this.props.list, null, 2);
+
+	            global.CutViewActions.cutView(str);
 	            //console.log(JSON.stringify(this.props.list,null,4));
 
 	            //global.CutViewActions.cutView(React.addons.cloneWithProps(this));
@@ -48472,7 +48542,7 @@
 	        /*
 	        <OverlayTrigger placement="top" overlay={numTip}>
 	                        <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>v</Button></OverlayTrigger>
-	                          <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>v</Button>
+	                          <Button bsSize="small" onClick={this.onCutViewSelect.bind(this)} ref='cutBtn'>J</Button>
 	        */
 
 	    }, {
@@ -48487,10 +48557,10 @@
 	    }, {
 	        key: 'renderHeaderCont',
 	        value: function renderHeaderCont() {
-	            var _getListAndIdx6 = this.getListAndIdx();
+	            var _getListAndIdx8 = this.getListAndIdx();
 
-	            var list = _getListAndIdx6.list;
-	            var idx = _getListAndIdx6.idx;
+	            var list = _getListAndIdx8.list;
+	            var idx = _getListAndIdx8.idx;
 
 	            var hasSelect = idx > -1 && idx < list.length;
 	            var disableCreate = this.props.disableCreate == true;
@@ -48526,11 +48596,21 @@
 	                        ),
 	                        _react2['default'].createElement(
 	                            OverlayTrigger,
-	                            { placement: 'top', overlay: dupTip },
+	                            { placement: 'top', overlay: copyTip },
 	                            _react2['default'].createElement(
 	                                Button,
-	                                { bsSize: 'small', onClick: this.onDuplicate.bind(this), ref: 'dupBtn', disabled: disableCreate },
+	                                { bsSize: 'small', onClick: this.onCopy.bind(this), ref: 'cpBtn', disabled: disableCreate },
 	                                _react2['default'].createElement(Glyphicon, { glyph: 'duplicate' }),
+	                                ' '
+	                            )
+	                        ),
+	                        _react2['default'].createElement(
+	                            OverlayTrigger,
+	                            { placement: 'top', overlay: pasteTip },
+	                            _react2['default'].createElement(
+	                                Button,
+	                                { bsSize: 'small', onClick: this.onPaste.bind(this), ref: 'dupBtn', disabled: disableCreate },
+	                                _react2['default'].createElement(Glyphicon, { glyph: 'paste' }),
 	                                ' '
 	                            )
 	                        ),
@@ -48542,11 +48622,6 @@
 	                                { bsSize: 'small', onClick: this.onClearSelect.bind(this), ref: 'numBtn' },
 	                                this.state.selectIdx
 	                            )
-	                        ),
-	                        _react2['default'].createElement(
-	                            Button,
-	                            { bsSize: 'small', onClick: this.onCutViewSelect.bind(this), ref: 'cutBtn' },
-	                            'J'
 	                        )
 	                    )
 	                )
@@ -50720,6 +50795,8 @@
 	
 	'use strict';
 
+	var _reactBootstrap = __webpack_require__(177);
+
 	var React = __webpack_require__(22);
 
 	var XEditableText = React.createClass({
@@ -50732,16 +50809,24 @@
 	  },
 
 	  componentWillUnmount: function componentWillUnmount() {
-	    var dom = $(React.findDOMNode(this.refs.editableElement));
-	    dom.on('save', null);
+	    var dom = $(React.findDOMNode(this.refs.txt));
+
+	    dom.keypress(null);
 	  },
 
 	  componentDidMount: function componentDidMount() {
 	    var _this = this;
 
+	    var dom = $(React.findDOMNode(this.refs.txt));
+
+	    dom.keypress(this.onPress.bind(this));
+	    dom.blur(this.save.bind(this));
+	    dom.focus(this.focusIn.bind(this));
+
+	    return;
 	    var dom = $(React.findDOMNode(this.refs.editableElement));
 
-	    //window.log('dengyp XEditableText componentDidMount:'+this.props.val);
+	    window.log('dengyp XEditableText componentDidMount:' + this.props.val);
 	    var val = this.props.val == '' ? "" : this.props.val;
 	    dom.editable({ value: this.props.val });
 
@@ -50752,44 +50837,64 @@
 	    });
 	  },
 
+	  onPress: function onPress(e) {
+	    if (e.keyCode == 13) {
+	      this.save();
+	    }
+	  },
+
+	  focusIn: function focusIn() {
+	    var dom = $(React.findDOMNode(this.refs.txt));
+	    dom[0].contenteditable = true;
+	  },
+
+	  save: function save() {
+	    var dom = $(React.findDOMNode(this.refs.txt));
+	    if (this.props.onChange) {
+	      console.log(dom[0].value);
+	      this.props.onChange(this.props.id, dom[0].value);
+	      dom[0].contenteditable = false;
+	    }
+	  },
+
 	  //{...this.props}
 	  render: function render() {
 	    var ps = this.props;
 	    var v = Math.random().toString();
-	    var val = ps.val == '' ? "null" : ps.val;
+	    var val = ps.val == '' ? "" : ps.val;
 	    var max = 35;
 	    if (val.length > max) {
-	      val = val.substring(0, max) + "...";
+	      //val=val.substring(0,max)+"..."
 	    }
 	    var refStr = "#" + Math.random();
-	    var set = this.setState.bind(this);
-	    setTimeout(this.componentDidMount.bind(this), 10);
+	    //var set=this.setState.bind(this);
+	    //setTimeout(this.componentDidMount.bind(this), 100);
 	    /*
 	    setTimeout(function(){
 	      set({ran:Math.random()});        
 	    }, 100*Math.random());*/
+	    var obj = {
+	      "border-top": "0px",
+	      "border-left": "0px",
+	      "border-right": "0px",
+	      "border-down": "0px"
+	    };
 
-	    return React.createElement(
-	      'a',
-	      { href: refStr,
-	        ref: 'editableElement',
-	        id: ps.id,
-	        'data-type': 'text',
-	        'data-pk': v,
-	        'data-inputclass': 'input-large',
-	        'data-title': ps.title },
-	      val
-	    )
-	    /*
-	    return (
-	        <a href="#"
-	           ref="editableElement"
-	           id="username"
-	           data-type="text"
-	           data-pk="1"
-	           data-title="变量名">ROOT</a>
-	           */
-	    ;
+	    return(
+
+	      //<Input ref="txt" type="dymamic" value={val}></Input> onkeypress={this.onPress.bind(this)}
+	      React.createElement('input', { type: 'text', style: obj, ref: 'txt', defaultValue: val })
+	      /*
+	      return (
+	          <a href="#"
+	             ref="editableElement"
+	             id="username"
+	             data-type="text"
+	             data-pk="1"
+	             data-title="变量名">ROOT</a>
+	             */
+
+	    );
 	  }
 	});
 
@@ -66030,12 +66135,16 @@
 
 	    createIncId: function createIncId() {
 	        //return ++this.workVo.idCreater;
-	        var idx = this.workVo.idCreater + 1;
-	        this.workVo.set('idCreater', idx);
+	        var idx = ++this.idCreater;
+	        //this.workVo.set('idCreater',idx);
 	        return idx;
 	    },
 
 	    onSelectSpace: function onSelectSpace(id) {
+	        if (id == this.workVo.curProject) {
+	            return;
+	        }
+
 	        var _findProject = this.findProject(id);
 
 	        var space = _findProject.space;
@@ -66044,9 +66153,68 @@
 	        console.log('onSelectSpace', id);
 	        console.dir(project);
 	        if (project) {
-	            ProjectActions.changeAction(project);
+	            //ProjectActions.changeAction(project);
 	            this.workVo.set("curProject", id);
 	        }
+	    },
+
+	    onExtand: function onExtand() {
+	        var b = !this.extanded;
+	        var vo = global.ProjectStore.model;
+	        if (vo) {
+	            global.log(b ? "展开" : "收起");
+	            var list = vo.jobs;
+	            for (var key in list) {
+	                list[key].set("expanded", b);
+	            }
+	        }
+
+	        this.extanded = b;
+	    },
+
+	    onTest: function onTest() {
+	        if (this.testId && this.testId > 0) {
+	            clearInterval(this.testId);
+	            global.log("结束测试");
+	            return;
+	        }
+	        // var vo=global.ProjectStore.model;      
+
+	        //if(vo==null){
+	        // vo=this.findProject(this.workVo.curProject).project
+	        //}
+	        global.log("开始测试");
+	        // console.dir(vo);
+	        var work = this.freezer;
+	        var getVar = function getVar() {
+	            //console.dir(work);
+	            var vo = work.get().space[1].projects[1];
+	            //var vo=this.findProject(this.workVo.curProject).project
+	            var idx = Math.random() * vo.vars.length >> 0;
+	            console.log('idx ' + idx);
+	            return vo.vars[idx];
+	        };
+
+	        var getJob = function getJob() {
+	            //console.dir(work);
+	            var vo = work.get().space[1].projects[1];
+	            //var vo=this.findProject(this.workVo.curProject).project
+	            var idx = Math.random() * vo.jobs.length >> 0;
+	            console.log('idx ' + idx);
+	            return vo.jobs[idx];
+	        };
+
+	        this.testId = setInterval(function () {
+	            var s = Math.random();
+	            if (s < 0.7) {
+	                var val = getVar();
+	                console.log('ffffffffffffffff ' + s);
+	                console.dir(val);
+	                val.set("val", s);
+	            } else {
+	                getJob().set("desc", s + "");
+	            }
+	        }, 100);
 	    },
 
 	    onUndo: function onUndo() {
@@ -66073,19 +66241,22 @@
 	    },
 
 	    updateWorkVo: function updateWorkVo() {
-	        this.workVo = this.freezer.get();
-	        this.trigger(this.workVo);
 	        console.log('--------::: dengyp updateWorkVo :::--------------');
-	        console.dir(this.workVo);
+	        this.workVo = this.freezer.get();
+	        //return ;
+	        this.trigger(this.workVo);
+
+	        //console.dir(this.workVo);
 
 	        if (this.workVo.curProject > 0) {
 	            global.ProjectActions.changeAction(this.findProject(this.workVo.curProject).project);
 	        }
-	        //global.QueueActions.changeQueue(this.workVo.queues);
+	        global.QueueActions.changeQueue(this.workVo.queues);
 	    },
 
 	    onSaveSpace: function onSaveSpace(evt) {
-	        localStorage.setItem(localStorageKey, JSON.stringify(this.workVo));
+	        this.freezer.get().set("idCreater", this.idCreater);
+	        localStorage.setItem(localStorageKey, JSON.stringify(this.freezer.get()));
 
 	        if (evt) {
 	            global.log('保存成功！');
@@ -66117,16 +66288,19 @@
 	        global.log('导入文件', val);
 	        var str = fs.readFileSync(val, 'utf-8');
 	        var obj = JSON.parse(str);
+
 	        if (obj && obj.space) {
 	            for (var key in obj.space) {
 	                var theSp = obj.space[key];
 	                var sp = this.findSpace(theSp.name);
 	                if (sp) {
 	                    for (var k in theSp.projects) {
-	                        sp.projects.push(global.cloneCreate(theSp.projects[k]));
+	                        var obj = global.cloneCreate(global.cloneCreate(theSp.projects[k]));
+	                        sp.projects.push(obj);
 	                    }
 	                } else {
-	                    this.workVo.space.push(global.cloneCreate(theSp));
+	                    var obj = global.cloneCreate(theSp);
+	                    this.workVo.space.push(obj);
 	                }
 	            }
 	            //this.trigger(this.workVo);
@@ -66167,6 +66341,7 @@
 	        var me = this;
 	        this.freezer.on('update', function (updated) {
 	            var storeHistory, nextIndex;
+
 	            console.log('.....update....');
 	            // Check if this state has not been set by the history
 	            if (updated != me.state.storeHistory[me.state.currentStore]) {
@@ -66187,6 +66362,7 @@
 	            }
 	        });
 	        this.updateWorkVo(); //不知道要不要的
+	        this.idCreater = this.workVo.idCreater;
 
 	        var ep = this.exportSpace;
 	        var ip = this.importSpace;
@@ -66213,6 +66389,8 @@
 	        global.keyMgr.register('ctrl_b', this.onPublish.bind(this));
 	        global.keyMgr.register('ctrl_z', this.onUndo.bind(this));
 	        global.keyMgr.register('ctrl_y', this.onRedo.bind(this));
+	        global.keyMgr.register('ctrl_e', this.onExtand.bind(this));
+	        global.keyMgr.register('ctrl_t', this.onTest.bind(this));
 	    },
 
 	    onPublish: function onPublish() {
@@ -66239,12 +66417,12 @@
 	        var list = this.workVo.space;
 	        for (var key in list) {
 	            var vo = list[key];
-	            //console.log("find id",id,key);
-	            //console.dir(vo);
-	            var idx = _.findIndex(vo.projects, { 'id': id });
-	            //console.log("finded",idx);
-	            if (idx > -1) {
-	                return { space: vo, project: vo.projects[idx] };
+	            var len = vo.projects.length;
+	            for (var i = 0; i < len; i++) {
+	                var p = vo.projects[i];
+	                if (p.id == id) {
+	                    return { space: vo, project: p };
+	                }
 	            }
 	        }
 	        return {};
@@ -67451,19 +67629,27 @@
 
 	    onRunLast: function onRunLast() {
 	        global.log("dengyp onRunLast" + this.lastProject);
+	        var vo = global.ProjectStore.model;
+
 	        if (this.lastProject == -1) {
-	            this.onRunQueue();
+	            if (vo) {
+	                this.onRunJob(vo.id);
+	            } else {
+	                this.onRunQueue();
+	            }
 	        } else {
 	            this.onRunJob(this.lastProject);
 	        }
 	    },
 
 	    onChangeQueue: function onChangeQueue(list) {
+	        //global.log("changeQueue");
 	        this.model = list;
 	        this.trigger(this.model);
 	    },
 
 	    onAddToQueue: function onAddToQueue(id) {
+	        global.log("addToQueue:", id);
 	        if (this.model.indexOf(id) != -1) {
 	            window.log("已经存在于队列");
 	            return;
@@ -67626,7 +67812,10 @@
 	    },
 
 	    onCleanAll: function onCleanAll() {
-	        _.remove(this.model);
+	        //_.remove(this.model);
+	        while (this.model.length > 0) {
+	            this.model = this.model.splice(0, 1);
+	        }
 	        this.onChangeQueue(this.model);
 	    }
 
@@ -67685,7 +67874,15 @@
 	    listenables: global.CutViewActions,
 
 	    onCutView: function onCutView(view) {
-	        this.model = view;
+	        if (view == "") {
+	            this.model = "";
+	        } else {
+	            var str = view.replace(/\},\s*\{/g, "},{");
+	            str = str.replace(/\s*\"id.*\n/g, "\n");
+	            str = str.replace(/\\\\/g, "\\");
+	            this.model += str;
+	        }
+
 	        this.trigger(this.model);
 	    }
 
@@ -67954,7 +68151,8 @@
 	    } else if (type == "logView") {
 	        return _componentsUtilLogViewJs2['default'];
 	    } else if (type == "cutView") {
-	        return _componentsBodyCutViewJs2['default'];
+	        return null;
+	        //return CutView;
 	    }
 	    return null;
 	};
@@ -68535,7 +68733,7 @@
 
 	    changeName: function changeName(kev, value) {
 	        var vo = this.props.data;
-	        vo.name = value;
+	        vo.set("name", value);
 	    },
 
 	    onSelect: function onSelect() {
@@ -68646,7 +68844,7 @@
 
 	    changeName: function changeName(id, value) {
 	        var vo = this.props.data;
-	        vo.name = value;
+	        vo.set("name", value);
 	    },
 
 	    render: function render() {
@@ -68658,7 +68856,7 @@
 	            'div',
 	            { className: 'SpaceNav' },
 	            React.createElement(
-	                'h3',
+	                'h4',
 	                { className: this.buildToggleClassName() },
 	                React.createElement(
 	                    _reactBootstrap.Button,
@@ -68801,7 +68999,17 @@
 	        this.setState(model);
 	    },
 
+	    //非常重要，干掉影响性能
+	    shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+	        //return true;
+	        //console.dir(nextState);
+	        //console.dir(this.state);
+	        // console.log(nextState!=this.state);
+	        return nextState != this.state;
+	    },
+
 	    renderVarList: function renderVarList() {
+	        //global.log('################ renderVarList');
 	        var vo = this.state;
 	        var ps = {};
 	        ps.list = vo.vars;
@@ -68871,6 +69079,8 @@
 	    },
 
 	    render: function render() {
+	        //window.log("ProjectView.js render");
+	        //{this.renderJobList()}{this.renderJobList()}
 	        var vo = this.state;
 	        return React.createElement(
 	            _reactBootstrap.Panel,
@@ -69137,6 +69347,15 @@
 	            return nextProps.data != this.props.data;
 	        }
 	    }, {
+	        key: 'onCutViewSelect',
+	        value: function onCutViewSelect(e) {
+	            //e.stopPropagation();
+	            var str = JSON.stringify(this.props.data, null, 2);
+	            global.CutViewActions.cutView(str);
+
+	            //e.stopImmediatePropagation();
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var item = this.props.data;
@@ -69192,7 +69411,7 @@
 	            }
 
 	            //global.log("render jobview",item.expanded);
-	            //<Row>{arr}</Row>defaultExpanded={true} expanded={true}
+	            //<Row>{arr}</Row>defaultExpanded={true} expanded={true} <Glyphicon glyph="ok" /> <Button bsSize="xsmall" onClick={this.onCutViewSelect.bind(this)}>J</Button>
 	            var head = _react2['default'].createElement(
 	                'div',
 	                null,

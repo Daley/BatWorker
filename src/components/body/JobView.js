@@ -4,7 +4,7 @@
 import React, {Component} from 'react';
 import ValueGroup from '../util/ValueGroup.js'
 import XEditableText from "../Enhanced/XEditableText.js";
-import {Grid, Row,Col,Button,DropdownButton,MenuItem,Panel,Nav,NavItem,PanelGroup,Label,Accordion} from 'react-bootstrap';
+import {Grid, Row,Col,Button,DropdownButton,MenuItem,Panel,Nav,NavItem,PanelGroup,Label,Accordion,Glyphicon} from 'react-bootstrap';
 import ToggleBtn from '../util/ToggleBtn.js';
 
 var _ = require('lodash');
@@ -165,6 +165,14 @@ class JobItem extends Component{
         return nextProps.data != this.props.data;
     }
 
+    onCutViewSelect(e){
+       //e.stopPropagation();
+       var str=JSON.stringify(this.props.data,null,2);      
+       global.CutViewActions.cutView(str);
+
+       //e.stopImmediatePropagation();
+    }
+
     render(){
         var item=this.props.data;        
         
@@ -206,13 +214,15 @@ class JobItem extends Component{
         }
 
     //global.log("render jobview",item.expanded);
-        //<Row>{arr}</Row>defaultExpanded={true} expanded={true}
-    var head=<div>{item.name+"--::--"+item.desc+"  "}<ToggleBtn selected={need} onChange={this.onToggleNeed.bind(this)}/></div>;
-
-    return (<Panel header={head} eventKey={this.props.idx} collapsible={true} expanded={expanded} onClick={this.onClickCall.bind(this)} onSelect={this.onSelectChange.bind(this)}>
-        			<Row>{arr}</Row>
-                </Panel>);
+        //<Row>{arr}</Row>defaultExpanded={true} expanded={true} <Glyphicon glyph="ok" /> <Button bsSize="xsmall" onClick={this.onCutViewSelect.bind(this)}>J</Button>
+    var head=<div>{item.name+"--::--"+item.desc+"  "}
+                <ToggleBtn selected={need} onChange={this.onToggleNeed.bind(this)}/>
                 
+                </div>;
+
+    return (<Panel header={head} eventKey={this.props.idx}  collapsible={true} expanded={expanded} onClick={this.onClickCall.bind(this)} onSelect={this.onSelectChange.bind(this)}>
+        			<Row>{arr}</Row>
+                </Panel>);                
     }
 }
 

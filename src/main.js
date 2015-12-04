@@ -57,7 +57,7 @@ var ProjectView = require("./components/body/ProjectView.js");
 var Main = React.createClass({
     render: function() {
        return   <div>
-                    <HeaderView/>
+                    
                     <Grid fluid={ true }>
 
                         <Row>                    
@@ -96,10 +96,14 @@ var showAllPanels=function(){
     var func=function(){
         panels.map(function(item){
             //传的是引用 ，改了就改了
+            var cz=global.getPanelByType(item.panel_id);
+            if(cz==null){
+                return;
+            }
             global.showPop(
                 {
                     isFloat:true,vo:item,
-                    clazz:global.getPanelByType(item.panel_id),
+                    clazz:cz,
                     header:global.getPanelNameByType(item.panel_id)
                 }
                 );

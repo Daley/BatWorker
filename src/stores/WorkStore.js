@@ -20,20 +20,83 @@ var WorkStore = Reflux.createStore({
 
     createIncId:function(){
     	//return ++this.workVo.idCreater;
-        var idx=this.workVo.idCreater+1;
-        this.workVo.set('idCreater',idx);
+        var idx=++this.idCreater;
+        //this.workVo.set('idCreater',idx);
         return idx;
     },
 
     onSelectSpace:function(id){
+        if(id==this.workVo.curProject){
+            return;
+        }
+
         let {space,project}=this.findProject(id);
         console.log('onSelectSpace',id);
         console.dir(project);
         if(project){
-            ProjectActions.changeAction(project);
+            //ProjectActions.changeAction(project);
             this.workVo.set("curProject",id);
         }
         
+    },
+
+    onExtand:function(){
+        var b=!this.extanded;
+        var vo=global.ProjectStore.model;
+        if(vo){
+            global.log(b?"展开":"收起");
+            var list=vo.jobs;
+            for(var key in list){
+                list[key].set("expanded",b);
+            }
+        }
+
+        this.extanded=b;
+    },
+
+    onTest:function(){
+        if(this.testId&&this.testId>0){
+            clearInterval(this.testId);
+            global.log("结束测试");
+            return;
+        }
+       // var vo=global.ProjectStore.model;       
+
+        //if(vo==null){
+           // vo=this.findProject(this.workVo.curProject).project
+        //}
+            global.log("开始测试");
+           // console.dir(vo);
+           var work=this.freezer;
+            var getVar=function(){
+                //console.dir(work);
+                var vo = work.get().space[1].projects[1];
+                //var vo=this.findProject(this.workVo.curProject).project
+                var idx=(Math.random()*vo.vars.length)>>0;
+                console.log('idx '+idx);
+                return vo.vars[idx];
+            }
+
+            var getJob=function(){
+                //console.dir(work);
+                var vo = work.get().space[1].projects[1];
+                //var vo=this.findProject(this.workVo.curProject).project
+                var idx=(Math.random()*vo.jobs.length)>>0;
+                console.log('idx '+idx);
+                return vo.jobs[idx];
+            }
+            
+            this.testId=setInterval(function(){
+                var s=Math.random();
+                if(s<0.7){
+                    var val=getVar();
+                    console.log('ffffffffffffffff ' +s);
+                    console.dir(val);
+                    val.set("val",s);
+                }else{
+                    getJob().set("desc",s+"");
+                }
+            }, 100);
     },
 
     onUndo: function(){
@@ -61,19 +124,22 @@ var WorkStore = Reflux.createStore({
     },
 
     updateWorkVo:function(){
-        this.workVo=this.freezer.get();
-        this.trigger(this.workVo);
         console.log('--------::: dengyp updateWorkVo :::--------------');
-        console.dir(this.workVo);
+        this.workVo=this.freezer.get();
+        //return ;
+        this.trigger(this.workVo);
+        
+        //console.dir(this.workVo);
 
         if(this.workVo.curProject>0){
             global.ProjectActions.changeAction(this.findProject(this.workVo.curProject).project);
         }
-        //global.QueueActions.changeQueue(this.workVo.queues);
+        global.QueueActions.changeQueue(this.workVo.queues);
     },
 
-    onSaveSpace:function(evt){               
-    	localStorage.setItem(localStorageKey, JSON.stringify(this.workVo));
+    onSaveSpace:function(evt){
+        this.freezer.get().set("idCreater",this.idCreater);           
+    	localStorage.setItem(localStorageKey, JSON.stringify(this.freezer.get()));
         
         if(evt){
             global.log('保存成功！');
@@ -106,20 +172,24 @@ var WorkStore = Reflux.createStore({
         global.log('导入文件',val);
         var str=fs.readFileSync(val, 'utf-8');
         var obj=JSON.parse(str);
+       
         if(obj&&obj.space){
             for(var key in obj.space){
                 var theSp=obj.space[key];
                 var sp=this.findSpace(theSp.name);
                 if(sp){
                     for(var k in theSp.projects){
-                        sp.projects.push(global.cloneCreate(theSp.projects[k]));
+                        var obj=global.cloneCreate(global.cloneCreate(theSp.projects[k]));                        
+                        sp.projects.push(obj);
                     }
                 }else{
-                    this.workVo.space.push(global.cloneCreate(theSp));
+                    var obj=global.cloneCreate(theSp);               
+                    this.workVo.space.push(obj);
                 }
             }
            //this.trigger(this.workVo);
         }
+       
     },
 
     exportSpace:function(val){
@@ -157,6 +227,7 @@ var WorkStore = Reflux.createStore({
             var me=this;
             this.freezer.on('update', function( updated ){                
                 var storeHistory, nextIndex;
+                
                 console.log('.....update....');
                 // Check if this state has not been set by the history
                 if( updated != me.state.storeHistory[ me.state.currentStore ] ){
@@ -178,6 +249,7 @@ var WorkStore = Reflux.createStore({
                 }
             });
             this.updateWorkVo(); //不知道要不要的
+            this.idCreater=this.workVo.idCreater;
 
             var ep=this.exportSpace;
             var ip=this.importSpace;
@@ -204,6 +276,8 @@ var WorkStore = Reflux.createStore({
         global.keyMgr.register('ctrl_b',this.onPublish.bind(this));
         global.keyMgr.register('ctrl_z',this.onUndo.bind(this));
         global.keyMgr.register('ctrl_y',this.onRedo.bind(this));
+        global.keyMgr.register('ctrl_e',this.onExtand.bind(this));
+        global.keyMgr.register('ctrl_t',this.onTest.bind(this));
     },
 
     onPublish:function(){
@@ -231,13 +305,14 @@ var WorkStore = Reflux.createStore({
         var list=this.workVo.space;
         for(let key in list){
             var vo=list[key];
-            //console.log("find id",id,key);
-            //console.dir(vo);
-            let idx=_.findIndex(vo.projects, { 'id': id });
-            //console.log("finded",idx);
-            if(idx>-1){
-                return {space:vo,project:vo.projects[idx]};
-            }
+            var len=vo.projects.length;
+            for(var i=0;i<len;i++){
+                var p=vo.projects[i];
+                if(p.id==id){
+                    return {space:vo,project:p};
+                }
+            }          
+           
         }
         return {};
     },

@@ -22,3 +22,11 @@ input.form-control.input-large{
 	width:450px;
 }
 
+input[type="text"]{
+	border-color: rgba(150, 214, 242, 0.37);
+	border-collapse: collapse;
+	  
+  /* border-width: thin; */
+}
+
+

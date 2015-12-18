@@ -1,18 +1,17 @@
 'use strict';
-
 //require('./assets/css/bootstrap.min.css');
 
-require('./assets/css/font-awesome.min.css');
-
-require('./libs/bootstrap3-editable/css/bootstrap-editable.css');
-
-require('./libs/bootstrap3-editable/js/bootstrap-editable.js');
+//require('./assets/css/font-awesome.min.css');
+//require('./libs/bootstrap3-editable/css/bootstrap-editable.css');
+//require('./libs/bootstrap3-editable/js/bootstrap-editable.js');
 
 
 import Reflux from 'reflux';
 import React from 'react';
 //import * as ReactBootstrap from 'react-bootstrap';
 import {Grid, Row,Col,Modal,Button} from 'react-bootstrap';
+import {PopMgr,KeyMgr,ValueGroup,PopGroup} from "./common/index.js";
+
 import AppCfgs from "./cfg/AppCfgs.js";
 //actions && stores
 var global=window;
@@ -24,7 +23,7 @@ global.LogActions=Reflux.createActions(AppCfgs.logActions);
 global.CutViewActions=Reflux.createActions(AppCfgs.cutViewActions);
 
 global.lang=require("./cfg/LangCfg.js");
-global.keyMgr=require("./common/KeyMgr.js");
+global.keyMgr=KeyMgr;
 global.keyMgr.init($(document));
 
 global.WorkStore=require("./stores/WorkStore.js");
@@ -33,14 +32,11 @@ global.QueueStore=require("./stores/QueueStore.js");
 global.LogStore=require("./stores/LogStore.js");
 global.CutViewStore=require("./stores/CutViewStore.js");
 
-global.popMgr=require("./common/PopMgr.js");
+global.popMgr=PopMgr;
 global.popMgr.init(document.getElementById('pop_layer'))
 
 require('./common/GlobalFunc.js');
 
-import ValueGroup from './components/util/ValueGroup.js'
-import PopGroup from './components/util/PopGroup.js'
-import HeaderView from './components/header/Header.js'
 
 var _ = require('lodash');
 
@@ -50,8 +46,9 @@ global.WorkStore.initStore();
 console.log("workVo");
 console.dir(global.WorkStore);
 
-var SpaceList = require("./components/body/SpaceList.js");
-var ProjectView = require("./components/body/ProjectView.js");
+import HeaderView from './views/header/Header.js'
+var SpaceList = require("./views/body/SpaceList.js");
+var ProjectView = require("./views/body/ProjectView.js");
 
 // <HeaderView/>
 var Main = React.createClass({
@@ -79,7 +76,6 @@ var Main = React.createClass({
     }
 });
 
-//var TestEditor=require('./components/TestEditor.js')
 React.render(<Main/>, document.getElementById('content'));
 //global.popMgr=React.createElement(PopGroup);
 React.render(<PopGroup/>,document.getElementById('panel_layer'));
@@ -111,28 +107,26 @@ var showAllPanels=function(){
     }
     func();
 }
-
-//global.WorkStore.freezer.on("update",showAllPanels);
 showAllPanels();
 
-//setTimeout(func, 2000);
 
-/*
-var Freezer = require('freezer-js');
-var freezer = new Freezer({
-    a: {x: 1, y: 2, z: [0, 1, 2] },
-    b: [ 5, 6, 7 , { m: 1, n: 2 } ],
-    c: 'Hola',
-    d: null // It is possible to store whatever
-});
 
-var state = freezer.get();
+var renderHelpBody=function(){
+        return (<div>
+                    <h2>快捷键</h2>
+                    <h5>Ctrl+S 保存</h5>
+                    <h5>Ctrl+Q 把当前项目加到队列</h5>
+                    <h5>Ctrl+R 运行当前项目</h5>
+                    <h5>Ctrl+Z 撤消</h5>
+                    <h5>Ctrl+Y 重做</h5>
+                    <h5>Ctrl+H 本帮助</h5>
+                    <hr />
+                    <h2>balalalala</h2>
+                </div>)
+}
 
-freezer.on('update', function( newValue ){    
-    console.log( 'ddddddddddddddddd I was updated' );
-});
-
-var updated = state.set( 'e', 4 ); // On next tick it will log 'I was updated'
-console.log('fffffffffffffffffffffffffffffffffffffffffffffffffffff');
-console.dir(state);*/
-
+var showHelp=function(){
+        window.log("显示帮助");
+        window.popMgr.showInfo('简单的帮助',renderHelpBody());
+}
+window.keyMgr.register('ctrl_h',showHelp);

@@ -59,7 +59,10 @@
       // important to note that $.fn.prop is only available on jquery 1.6+
       if ( this !== event.target && (/textarea|select/i.test( event.target.nodeName ) ||
         event.target.type === "text" || $(event.target).prop('contenteditable') == 'true' )) {
-        return;
+        if(!event.ctrlKey){
+          return;
+        }
+        
       }
 
       // Keypress represents characters, not special keys

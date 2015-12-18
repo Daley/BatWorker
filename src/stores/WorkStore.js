@@ -268,7 +268,7 @@ var WorkStore = Reflux.createStore({
             });
 
            // var kh=this.onSaveSpace;
-           // var keyUtil=require('../libs/KeyShort.js');
+           // var keyUtil=require('../common/KeyShort.js');
            // keyUtil.registerKey('Ctrl+Alt+B',kh);
             //setInterval(kh, 30000);
         global.keyMgr.register('ctrl_s',this.onSaveSpace.bind(this));

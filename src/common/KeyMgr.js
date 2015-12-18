@@ -7,8 +7,14 @@ var  KeyMgr={
     	this.domEle=domEle;
     },
 
+    onPress:function(e){
+        //console.log("key press:",e.keyCode);
+    },
+
     register:function(key,cb){
     	this.domEle.bind("keyup."+key,cb);
+
+        this.domEle.keypress(this.onPress.bind(this));
     },
 
     unregister:function(key,cb){

@@ -416,5 +416,65 @@ jobs.appendStrTmp={
 
 }
 
+jobs.xchgDir={
+	id:12,
+	type:'xchgDir',	
+	name:'交换目录内容',
+	dir1:"",
+	dir2:"",
+	tmp:'',
+	desc:'',
+	viewFilters:{
+		desc:'描述',
+		dir1:'目录1',
+		dir2:'目录2',
+		tmp:"中间目录"
+	},
+	exec:function(vo,vars,q){
+		var arr=[];
+		var tmp=(vo.tmp==null|| vo.tmp=="")?'c:\\tmp_sq':vo.tmp;
+		arr.push("move "+vo.dir1+" "+tmp);
+		arr.push("move "+vo.dir2+" "+vo.dir1);
+		arr.push("move "+tmp+" "+vo.dir2);
+
+		var myDefer = Q.defer();
+   		setTimeout(function(){
+    		myDefer.resolve('');
+    	}, 100);
+
+		var q = myDefer.promise;
+		var getOne=function(cmd){
+			var call=function(resolve, reject, notify) {
+				exec(cmd,{ cwd: global.cfgs.getVarByKey(vars,"root")}, 
+					function ( err, stdout, stderr ){
+						console.log('end runCmdTmp',err);
+					  if(err){
+					  	if(vo.breakError=='true'){
+							reject(err);
+					  	}else{
+							resolve("运行命令失败" +cmd);
+					 		global.log('运行命令失败',cmd);
+					  	}
+					  	
+					  }else{
+					  	resolve("成功运行命令"+cmd);
+					 	global.log('成功运行命令',cmd);
+					  }
+				});
+
+			};
+			return Q.Promise(call);
+		}
+
+		for(var i=0;i<arr.length;i++){
+			var cmd=arr[i];
+			q=q.then(getOne(cmd));
+		}
+		return q;
+	}
+
+}
+
+
 
 export default jobs;

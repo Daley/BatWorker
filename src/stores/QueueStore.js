@@ -17,23 +17,31 @@ var QueueStore = Reflux.createStore({
     init:function(){
         this.lastProject=-1;
         global.keyMgr.register('ctrl_r',this.onRunLast.bind(this));
+        global.keyMgr.register('ctrl_q',this.onAddQueue.bind(this));
     },
 
     onRunLast:function(){
         global.log("dengyp onRunLast"+this.lastProject);
         var vo=global.ProjectStore.model;
  
-        if(this.lastProject==-1){
+        //if(this.lastProject==-1){
             if(vo){
                  this.onRunJob(vo.id); 
              }else{
                 this.onRunQueue();
              }
            
-        }else{
-            this.onRunJob(this.lastProject); 
-        }
+       // }else{
+       //    this.onRunJob(this.lastProject); 
+       // }
         
+    },
+
+    onAddQueue:function(){
+        var vo=global.ProjectStore.model;
+        if(vo){
+            this.onAddToQueue(vo.id);
+        }
     },
 
     onChangeQueue: function(list) {

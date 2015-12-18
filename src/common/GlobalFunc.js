@@ -1,7 +1,8 @@
 var global=window;
-import LogView from '../components/util/LogView.js'
-import JobQueueView from '../components/body/JobQueueView.js'
-import CutView from '../components/body/CutView.js'
+
+
+import JobQueueView from '../views/body/JobQueueView.js'
+import {CutView,LogView,XEditableText} from "./index.js";
 
 var _ = require('lodash');
 
@@ -52,6 +53,23 @@ global.cloneCreate=function(data){
 	console.log('dengyp new clone');
 	console.dir(obj);
 	return obj;
+}
+
+global.searchAndReplace=function(obj,sStr,repStr){
+    //console.log(sStr,repStr);
+    for(var key in obj){
+        var val=obj[key];
+        if(_.isString(val)){
+            //console.log("searchAndReplace:"+val,sStr,repStr);
+
+            if(val.indexOf(sStr)>-1){
+
+                obj.set(key,val.replace(sStr,repStr));
+            }
+        }else if(_.isArray(obj[key])||_.isObject(obj[key])){
+            global.searchAndReplace(obj[key],sStr,repStr);
+        }
+    }
 }
 
 global.log=function(){

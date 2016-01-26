@@ -1,37 +1,41 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
-  <head>
-  	<meta charset="UTF-8">
+<head>
+	<meta charset="UTF-8">
         <title>BatWorker</title>
+
+
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="x-ua-compatible" content="IE=10">
-    <!-- Not present in the tutorial. Just for basic styling.<link href="./css/bootstrap-editable.css" rel="stylesheet"> -->
-    	<link href="./css/bootstrap.min.css" rel="stylesheet">
+    
+    
+      <link href="./css/bootstrap.min.css" rel="stylesheet">
+      <link href="./css/bat.css" rel="stylesheet">
+      <link rel="stylesheet" href="./css/codemirror.css">
       
        <script src="./js/codemirror.js"></script>
       
-    	<script src="./js/jquery.min.js"></script>
+      <script src="./js/jquery.min.js"></script>
       <script src="./js/jquery.hotkeys.js"></script>
-    	<script src="./js/bootstrap.js"></script>
-      <link href="./css/bat.css" rel="stylesheet">
+      <script src="./js/bootstrap.js"></script>   
+	
+</head>
+<body style="width:100%;height:100%;overflow:scroll;overflow-y:hidden;overflow-x:hidden">
+  <div id="content" style="width:100%;height:100%">
+  </div>
 
-      <link rel="stylesheet" href="./css/codemirror.css">
-  </head>
-  <body>
-    <div id="content" ></div>
-    <div id="panel_layer" className="modal-container" style="left:0;top:0" ></div>
-    <div id="pop_layer" className="modal-container" style="left:0,top:0"><div>
-    <input style="display:none;" id="openFile" type="file" />
-    <input style="display:none;" id="saveFile" type="file" nwsaveas />
-     <input style="display:none;" id="clearImportEle" type="file" />
+  <div id="panel_layer" className="modal-container" style="left:0;top:0" ></div>
+  <div id="pop_layer" className="modal-container" style="left:0,top:0"><div>
+  <input style="display:none;" id="openFile" type="file" />
+  <input style="display:none;" id="saveFile" type="file" nwsaveas />
+  <input style="display:none;" id="clearImportEle" type="file" />
 
-     <script type="text/javascript">
-         console.dir(global.require.main);
-         window.indexFile=global.require.main.filename;
-         window.indexPath=require('path').dirname(window.indexFile);
-         console.log(window.indexPath);
-     </script>     
-     
-    <script src="./bundle.js"></script>
-  </body>
+  <script type="text/javascript">
+           console.dir(global.require.main);
+           window.indexFile=global.require.main.filename;
+           window.indexPath=require('path').dirname(window.indexFile);
+           console.log(window.indexPath);
+       </script>     
+  <script src="./bundle.js"></script>
+</body>
 </html>

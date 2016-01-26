@@ -171,6 +171,14 @@ var SpaceList = React.createClass({
                 </Button>
     },
 
+    renderTests:function(){
+        var items=[]
+        for(var i=0;i<100;i++){
+            items.push(<h1>dddddddddddddddddd</h1>);
+        }
+        return items;
+    },
+
     render: function() {       
         var menus=global.cfgs.spaceMenu;
 
@@ -190,18 +198,34 @@ var SpaceList = React.createClass({
                     }
                     </div>
         }
-      
 
-        return (
-            <Panel {...this.props} header="工作空间" bsStyle="info">
-                <ButtonGroup bsSize="small">                
-                    {
-                        menus.map(this.renderMenuItem)
-                    }
-                </ButtonGroup>
-                <ValueGroup {...spProps}></ValueGroup>
-            </Panel>
-            );
+        return (<div style={{width:"100%",height:"100%"}}>
+                    <div style={{backgroundColor:"#B3E2F4"}}>
+                        <div style={{fontSize:30}}>工作空间</div>
+                    </div>
+                        <ButtonGroup bsSize="small">                
+                         {
+                             menus.map(this.renderMenuItem)
+                         }
+                        </ButtonGroup>
+                    
+                 <div style={{width:"100%",height:"100%",overflowY:"auto"}}>
+                    <ValueGroup {...spProps} ></ValueGroup>
+                 </div>
+                </div>
+            )
+      //
+
+        // return (
+        //     <Panel {...this.props} header="工作空间" bsStyle="info">
+        //         <ButtonGroup bsSize="small">                
+        //             {
+        //                 menus.map(this.renderMenuItem)
+        //             }
+        //         </ButtonGroup>
+        //         <ValueGroup {...spProps}></ValueGroup>
+        //     </Panel>
+        //     );
     }
 });
 

@@ -352,7 +352,7 @@ class ValueGroup extends Component {
                 </div>
     }
 
-	renderHeaderCont(){
+	renderHeaderContd(){
 		var {list,idx}=this.getListAndIdx();
 		var hasSelect=idx>-1&&idx<list.length;
         var disableCreate=this.props.disableCreate==true;
@@ -382,15 +382,46 @@ class ValueGroup extends Component {
     			);
     }
 
+    renderHeaderCont(){
+        var {list,idx}=this.getListAndIdx();
+        var hasSelect=idx>-1&&idx<list.length;
+        var disableCreate=this.props.disableCreate==true;
+        //global.log("renderHeaderCont",idx);
+        return (<h3><ButtonToolbar>
+                  <ButtonGroup>
+                    <OverlayTrigger placement="top" overlay={addTip}>
+                    <Button bsSize="small" onClick={this.onAdd.bind(this)} ref="addBtn"  disabled={disableCreate}>增</Button></OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={removeTip}>
+                    <Button bsSize="small" onClick={this.onRemove.bind(this)} ref="removeBtn" >删</Button></OverlayTrigger>
+                    <OverlayTrigger placement="top" overlay={copyTip}>
+                    <Button bsSize="small" onClick={this.onCopy.bind(this)} ref="cpBtn" disabled={disableCreate}>复</Button></OverlayTrigger>
+
+                     <OverlayTrigger placement="top" overlay={pasteTip}>
+                    <Button bsSize="small" onClick={this.onPaste.bind(this)} ref="dupBtn" disabled={disableCreate}>粘 </Button></OverlayTrigger>
+
+                    <OverlayTrigger placement="top" overlay={numTip}>
+                    <Button bsSize="small" onClick={this.onClearSelect.bind(this)} ref='numBtn'>{this.state.selectIdx}</Button></OverlayTrigger>
+
+                    <OverlayTrigger placement="top" overlay={searchTip}>
+                    <Button bsSize="small" onClick={this.onSearch.bind(this)} ref='searchBtn'>替</Button></OverlayTrigger>
+                  </ButtonGroup>                  
+                              
+                </ButtonToolbar>
+                
+                </h3>
+                );
+    }
+
     render(){
         if(this.props.header){
             console.log('::--------------render:'+this.props.header);
         }
 
        var ps=_.assign({},this.props,{onSelectChange:this.onSelectChange.bind(this)});
+       var st=this.props.style||{};
         if(this.props.renderClazz){
             return (
-            <div ref="cont">          
+            <div ref="cont" style={st}>          
                 {this.renderHeader()}            
                 {React.createElement(this.props.renderClazz,ps)}       
             </div>
@@ -399,14 +430,14 @@ class ValueGroup extends Component {
 
     	if(this.props.renderHandler){
     		return (
-        	<div ref="cont">
+        	<div ref="cont" style={st}>
         	{this.renderHeader()}            
             {this.props.renderHandler(this.onSelectChange.bind(this))}       
             </div>
         	);
     	}
     	return (
-        	<div ref="cont">
+        	<div ref="cont" style={st}>
         		{this.renderHeader()}            
             	<DefaultGroup {...ps}/>            
             </div>

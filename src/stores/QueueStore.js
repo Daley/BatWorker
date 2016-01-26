@@ -87,11 +87,11 @@ var QueueStore = Reflux.createStore({
 	    	return newObj;
 	    }
 
-    	
+    	//console.dir(job);
     	var newJob=replaceAndClone(job);
     	
     	console.log("dengy prunJob",project.name);
-    	console.dir(newJob);
+    	//console.dir(newJob);
     	return global.cfgs.getJobExe(newJob,project.vars,q);
     },
 

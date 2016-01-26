@@ -53,7 +53,7 @@ var ProjectView = React.createClass({
         ps.header='变量列表';
         //ps.showOne=true;
 
-        return <ValueGroup {...ps}></ValueGroup>
+        return <ValueGroup {...ps} bsStyle="danger"></ValueGroup>
     },
 
     createJobFunc:function(idx,cb){
@@ -114,16 +114,23 @@ var ProjectView = React.createClass({
 
     render: function() {
         //window.log("ProjectView.js render");
-         //{this.renderJobList()}{this.renderJobList()}  
+         //{this.renderJobList()}{this.renderJobList()}   <div style={st}>
+         var st={
+            "overflow-y":"scroll",
+            "height":"100%"
+         };
+
         var vo=this.state;
         return (
-            <Panel {...this.props} header={"项目"+'--'+vo.name} bsStyle="info"> 
-                <Grid>                         
+           
+            <div >
+                <div style={{backgroundColor:"#B3E2F4",fontSize:30}}>{"项目"+'--'+vo.name}</div>
+                <div style={{width:"100%",height:"100%",overflowY:"auto"}}>                         
                     {this.renderVarList()}                
                   {this.renderJobList()}
                    
-                </Grid>          
-            </Panel>
+                </div>          
+            </div>
             );
     }
 });

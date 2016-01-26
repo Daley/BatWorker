@@ -118,30 +118,42 @@
 	    render: function render() {
 	        return _react2['default'].createElement(
 	            'div',
-	            null,
+	            { style: { width: "100%", height: "100%" } },
 	            _react2['default'].createElement(
 	                _reactBootstrap.Grid,
-	                { fluid: true },
+	                { fluid: true, style: { width: "100%", height: "100%" } },
 	                _react2['default'].createElement(
-	                    _reactBootstrap.Row,
-	                    null,
-	                    _react2['default'].createElement(
-	                        _reactBootstrap.Col,
-	                        { xs: 5,
-	                            sm: 4,
-	                            md: 3,
-	                            lg: 3 },
-	                        _react2['default'].createElement(SpaceList, null)
-	                    ),
-	                    _react2['default'].createElement(
-	                        _reactBootstrap.Col,
-	                        { xs: 7,
-	                            sm: 8,
-	                            md: 9,
-	                            lg: 9 },
-	                        _react2['default'].createElement(ProjectView, null)
-	                    )
+	                    _reactBootstrap.Col,
+	                    { xs: 5,
+	                        sm: 4,
+	                        md: 3,
+	                        lg: 3 },
+	                    _react2['default'].createElement(SpaceList, null)
+	                ),
+	                _react2['default'].createElement(
+	                    _reactBootstrap.Col,
+	                    { xs: 7,
+	                        sm: 8,
+	                        md: 9,
+	                        lg: 9 },
+	                    _react2['default'].createElement(ProjectView, null)
 	                )
+	            )
+	        );
+	    },
+	    renderd: function renderd() {
+	        return _react2['default'].createElement(
+	            'div',
+	            { style: { width: "100%", height: "100%" } },
+	            _react2['default'].createElement(
+	                'div',
+	                { style: { width: "30%", height: "100%" } },
+	                _react2['default'].createElement(SpaceList, null)
+	            ),
+	            _react2['default'].createElement(
+	                'div',
+	                { style: { width: "70%", height: "100%" } },
+	                _react2['default'].createElement(ProjectView, null)
 	            )
 	        );
 	    }
@@ -54336,8 +54348,8 @@
 	            );
 	        }
 	    }, {
-	        key: 'renderHeaderCont',
-	        value: function renderHeaderCont() {
+	        key: 'renderHeaderContd',
+	        value: function renderHeaderContd() {
 	            var _getListAndIdx9 = this.getListAndIdx();
 
 	            var list = _getListAndIdx9.list;
@@ -54418,6 +54430,84 @@
 	            );
 	        }
 	    }, {
+	        key: 'renderHeaderCont',
+	        value: function renderHeaderCont() {
+	            var _getListAndIdx10 = this.getListAndIdx();
+
+	            var list = _getListAndIdx10.list;
+	            var idx = _getListAndIdx10.idx;
+
+	            var hasSelect = idx > -1 && idx < list.length;
+	            var disableCreate = this.props.disableCreate == true;
+	            //global.log("renderHeaderCont",idx);
+	            return _react2['default'].createElement(
+	                'h3',
+	                null,
+	                _react2['default'].createElement(
+	                    ButtonToolbar,
+	                    null,
+	                    _react2['default'].createElement(
+	                        ButtonGroup,
+	                        null,
+	                        _react2['default'].createElement(
+	                            OverlayTrigger,
+	                            { placement: 'top', overlay: addTip },
+	                            _react2['default'].createElement(
+	                                Button,
+	                                { bsSize: 'small', onClick: this.onAdd.bind(this), ref: 'addBtn', disabled: disableCreate },
+	                                '增'
+	                            )
+	                        ),
+	                        _react2['default'].createElement(
+	                            OverlayTrigger,
+	                            { placement: 'top', overlay: removeTip },
+	                            _react2['default'].createElement(
+	                                Button,
+	                                { bsSize: 'small', onClick: this.onRemove.bind(this), ref: 'removeBtn' },
+	                                '删'
+	                            )
+	                        ),
+	                        _react2['default'].createElement(
+	                            OverlayTrigger,
+	                            { placement: 'top', overlay: copyTip },
+	                            _react2['default'].createElement(
+	                                Button,
+	                                { bsSize: 'small', onClick: this.onCopy.bind(this), ref: 'cpBtn', disabled: disableCreate },
+	                                '复'
+	                            )
+	                        ),
+	                        _react2['default'].createElement(
+	                            OverlayTrigger,
+	                            { placement: 'top', overlay: pasteTip },
+	                            _react2['default'].createElement(
+	                                Button,
+	                                { bsSize: 'small', onClick: this.onPaste.bind(this), ref: 'dupBtn', disabled: disableCreate },
+	                                '粘 '
+	                            )
+	                        ),
+	                        _react2['default'].createElement(
+	                            OverlayTrigger,
+	                            { placement: 'top', overlay: numTip },
+	                            _react2['default'].createElement(
+	                                Button,
+	                                { bsSize: 'small', onClick: this.onClearSelect.bind(this), ref: 'numBtn' },
+	                                this.state.selectIdx
+	                            )
+	                        ),
+	                        _react2['default'].createElement(
+	                            OverlayTrigger,
+	                            { placement: 'top', overlay: searchTip },
+	                            _react2['default'].createElement(
+	                                Button,
+	                                { bsSize: 'small', onClick: this.onSearch.bind(this), ref: 'searchBtn' },
+	                                '替'
+	                            )
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            if (this.props.header) {
@@ -54425,10 +54515,11 @@
 	            }
 
 	            var ps = _.assign({}, this.props, { onSelectChange: this.onSelectChange.bind(this) });
+	            var st = this.props.style || {};
 	            if (this.props.renderClazz) {
 	                return _react2['default'].createElement(
 	                    'div',
-	                    { ref: 'cont' },
+	                    { ref: 'cont', style: st },
 	                    this.renderHeader(),
 	                    _react2['default'].createElement(this.props.renderClazz, ps)
 	                );
@@ -54437,14 +54528,14 @@
 	            if (this.props.renderHandler) {
 	                return _react2['default'].createElement(
 	                    'div',
-	                    { ref: 'cont' },
+	                    { ref: 'cont', style: st },
 	                    this.renderHeader(),
 	                    this.props.renderHandler(this.onSelectChange.bind(this))
 	                );
 	            }
 	            return _react2['default'].createElement(
 	                'div',
-	                { ref: 'cont' },
+	                { ref: 'cont', style: st },
 	                this.renderHeader(),
 	                _react2['default'].createElement(DefaultGroup, ps)
 	            );
@@ -54635,6 +54726,25 @@
 	var jobs = {};
 	var global = window;
 
+	var deleteFolderRecursive = function deleteFolderRecursive(path) {
+
+		var files = [];
+		if (fs.existsSync(path)) {
+			files = fs.readdirSync(path);
+			files.forEach(function (file, index) {
+				var curPath = path + "/" + file;
+				if (fs.statSync(curPath).isDirectory()) {
+					// recurse
+					deleteFolderRecursive(curPath);
+				} else {
+					// delete file
+					fs.unlinkSync(curPath);
+				}
+			});
+			fs.rmdirSync(path);
+		}
+	};
+
 	jobs.clearDirTmp = {
 		id: 1,
 		type: 'clearDir',
@@ -54788,7 +54898,7 @@
 					//console.dir(result);
 					var data = fs.readFileSync(url, 'utf8');
 					var xml = dealData(data);
-					vo.nodes = ["uses-permission", "application.activity", "application.meta-data", "application.receiver", "application.service"];
+					vo.nodes = ["uses-permission", "application.activity", "application.meta-data", "application.receiver", "application.service", "application.provider"];
 					//console.dir(xml);
 					for (var i = 0; i < vo.nodes.length; i++) {
 						var arr = vo.nodes[i].split(".");
@@ -54823,6 +54933,8 @@
 
 				var str = new XMLSerializer().serializeToString(result);
 				str = str.replace(/\/\>\</g, "/>\n<"); //str=str.replace(/\>\</g,">\n\t<");
+				str = str.replace(/\>\</g, ">\n<"); //str=str.replace(/\>\</g,">\n\t<");
+
 				console.log('combinXml result');
 				console.dir(result);
 				fs.writeFileSync(vo.saveAs, str, "utf8");
@@ -55038,24 +55150,45 @@
 	jobs.xchgDir = {
 		id: 12,
 		type: 'xchgDir',
-		name: '交换目录内容',
+		name: '交换目录或文件',
 		dir1: "",
 		dir2: "",
-		tmp: '',
 		desc: '',
 		viewFilters: {
 			desc: '描述',
-			dir1: '目录1',
-			dir2: '目录2',
-			tmp: "中间目录"
+			dir1: '目录或文件1',
+			dir2: '目录或文件2'
 		},
 		exec: function exec(vo, vars, q) {
 			var arr = [];
-			var tmp = vo.tmp == null || vo.tmp == "" ? 'c:\\tmp_sq' : vo.tmp;
-			arr.push("move " + vo.dir1 + " " + tmp);
-			arr.push("move " + vo.dir2 + " " + vo.dir1);
-			arr.push("move " + tmp + " " + vo.dir2);
-
+			var tmp = vo.tmp == null || vo.tmp == "" ? global.indexPath + '/tmp_chg' : vo.tmp;
+			tmp = tmp.replace(/\//g, "\\");
+			try {
+				if (fs.existsSync(tmp) == false) {
+					fs.mkdirSync(tmp);
+				} else {
+					deleteFolderRecursive(tmp);
+				}
+			} catch (e) {
+				global.log(e);
+				return null;
+			}
+			//console.dir(vo);
+			//return;
+			var tmp = vo.tmp == null || vo.tmp == "" ? vo.dir1 + "_tmp" : vo.tmp;
+			-arr.push("move " + vo.dir1 + " " + tmp);
+			-arr.push("move " + vo.dir2 + " " + vo.dir1);
+			-arr.push("move " + tmp + " " + vo.dir2);
+			/*
+	  arr.push('xcopy "'+vo.dir1+'" "'+tmp+'" /E /I /F /Y');
+	  arr.push('RMDIR /S /Q '+vo.dir1);
+	  arr.push('mkdir '+vo.dir1);
+	  arr.push('xcopy "'+vo.dir2+'" "'+vo.dir1+'" /E /I /F /Y');
+	  arr.push('RMDIR /S /Q '+vo.dir2);
+	  arr.push('mkdir '+vo.dir2);
+	  arr.push('xcopy "'+tmp+'" "'+vo.dir2+'" /E /I /F /Y');
+	  arr.push('RMDIR /S /Q '+tmp);
+	  */
 			var myDefer = Q.defer();
 			setTimeout(function () {
 				myDefer.resolve('');
@@ -55064,19 +55197,25 @@
 			var q = myDefer.promise;
 			var getOne = function getOne(cmd) {
 				var call = function call(resolve, reject, notify) {
-					_exec(cmd, { cwd: global.cfgs.getVarByKey(vars, "root") }, function (err, stdout, stderr) {
-						console.log('end runCmdTmp', err);
+
+					//setTimeout(function(){
+					//	global.log("运行命令："+cmd);
+					//	resolve();
+					//}, 300);
+					//return;
+					_exec(cmd, function (err, stdout, stderr) {
+						console.log('end runCmdTmp', cmd, err);
 						if (err) {
 							if (vo.breakError == 'true') {
 								reject(err);
 							} else {
 								resolve("运行命令失败" + cmd);
-								global.log('运行命令失败', cmd);
+								//global.log('运行命令失败',cmd);
 							}
 						} else {
-							resolve("成功运行命令" + cmd);
-							global.log('成功运行命令', cmd);
-						}
+								resolve("成功运行命令" + cmd);
+								//global.log('成功运行命令',cmd);
+							}
 					});
 				};
 				return Q.Promise(call);
@@ -55084,7 +55223,9 @@
 
 			for (var i = 0; i < arr.length; i++) {
 				var cmd = arr[i];
-				q = q.then(getOne(cmd));
+				q = q.then((function (cmd) {
+					return getOne(cmd);
+				}).bind(null, cmd));
 			}
 			return q;
 		}
@@ -66003,10 +66144,11 @@
 	            return newObj;
 	        };
 
+	        //console.dir(job);
 	        var newJob = replaceAndClone(job);
 
 	        console.log("dengy prunJob", project.name);
-	        console.dir(newJob);
+	        //console.dir(newJob);
 	        return global.cfgs.getJobExe(newJob, project.vars, q);
 	    },
 
@@ -66531,8 +66673,6 @@
 	/* WEBPACK VAR INJECTION */(function(global) {
 	'use strict';
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
 	var _reactBootstrap = __webpack_require__(177);
 
 	var _commonIndexJs = __webpack_require__(413);
@@ -66759,6 +66899,18 @@
 	        );
 	    },
 
+	    renderTests: function renderTests() {
+	        var items = [];
+	        for (var i = 0; i < 100; i++) {
+	            items.push(React.createElement(
+	                'h1',
+	                null,
+	                'dddddddddddddddddd'
+	            ));
+	        }
+	        return items;
+	    },
+
 	    render: function render() {
 	        var _this = this;
 
@@ -66782,15 +66934,40 @@
 	        };
 
 	        return React.createElement(
-	            _reactBootstrap.Panel,
-	            _extends({}, this.props, { header: '工作空间', bsStyle: 'info' }),
+	            'div',
+	            { style: { width: "100%", height: "100%" } },
+	            React.createElement(
+	                'div',
+	                { style: { backgroundColor: "#B3E2F4" } },
+	                React.createElement(
+	                    'div',
+	                    { style: { fontSize: 30 } },
+	                    '工作空间'
+	                )
+	            ),
 	            React.createElement(
 	                _reactBootstrap.ButtonGroup,
 	                { bsSize: 'small' },
 	                menus.map(this.renderMenuItem)
 	            ),
-	            React.createElement(_commonIndexJs.ValueGroup, spProps)
+	            React.createElement(
+	                'div',
+	                { style: { width: "100%", height: "100%", overflowY: "auto" } },
+	                React.createElement(_commonIndexJs.ValueGroup, spProps)
+	            )
 	        );
+	        //
+
+	        // return (
+	        //     <Panel {...this.props} header="工作空间" bsStyle="info">
+	        //         <ButtonGroup bsSize="small">               
+	        //             {
+	        //                 menus.map(this.renderMenuItem)
+	        //             }
+	        //         </ButtonGroup>
+	        //         <ValueGroup {...spProps}></ValueGroup>
+	        //     </Panel>
+	        //     );
 	    }
 	});
 
@@ -66865,7 +67042,7 @@
 	        ps.header = '变量列表';
 	        //ps.showOne=true;
 
-	        return React.createElement(_commonIndexJs.ValueGroup, ps);
+	        return React.createElement(_commonIndexJs.ValueGroup, _extends({}, ps, { bsStyle: 'danger' }));
 	    },
 
 	    createJobFunc: function createJobFunc(idx, cb) {
@@ -66928,14 +67105,24 @@
 
 	    render: function render() {
 	        //window.log("ProjectView.js render");
-	        //{this.renderJobList()}{this.renderJobList()} 
+	        //{this.renderJobList()}{this.renderJobList()}   <div style={st}>
+	        var st = {
+	            "overflow-y": "scroll",
+	            "height": "100%"
+	        };
+
 	        var vo = this.state;
 	        return React.createElement(
-	            _reactBootstrap.Panel,
-	            _extends({}, this.props, { header: "项目" + '--' + vo.name, bsStyle: 'info' }),
+	            'div',
+	            null,
 	            React.createElement(
-	                _reactBootstrap.Grid,
-	                null,
+	                'div',
+	                { style: { backgroundColor: "#B3E2F4", fontSize: 30 } },
+	                "项目" + '--' + vo.name
+	            ),
+	            React.createElement(
+	                'div',
+	                { style: { width: "100%", height: "100%", overflowY: "auto" } },
 	                this.renderVarList(),
 	                this.renderJobList()
 	            )

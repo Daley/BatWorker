@@ -5,6 +5,23 @@ var Q=require('q');
 var jobs={};
 var global=window;
 
+var deleteFolderRecursive = function(path) {
+
+    var files = [];
+    if( fs.existsSync(path) ) {
+        files = fs.readdirSync(path);
+        files.forEach(function(file,index){
+            var curPath = path + "/" + file;
+            if(fs.statSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
+};
+
 jobs.clearDirTmp={
 	id:1,
 	type:'clearDir',
@@ -162,7 +179,8 @@ jobs.combinXmlTmp={
                                 "application.activity",
                                 "application.meta-data",
                                 "application.receiver",
-                                "application.service"
+                                "application.service",
+                                "application.provider"
                             ];
 				//console.dir(xml);
 				for(var i=0;i<vo.nodes.length;i++){
@@ -199,6 +217,8 @@ jobs.combinXmlTmp={
 
     		var str=(new XMLSerializer()).serializeToString(result);
     		str=str.replace(/\/\>\</g,"/>\n<");//str=str.replace(/\>\</g,">\n\t<");
+    		str=str.replace(/\>\</g,">\n<");//str=str.replace(/\>\</g,">\n\t<");
+
     		console.log('combinXml result');
     		console.dir(result);
 			fs.writeFileSync(vo.saveAs,str,"utf8");
@@ -419,24 +439,45 @@ jobs.appendStrTmp={
 jobs.xchgDir={
 	id:12,
 	type:'xchgDir',	
-	name:'交换目录内容',
+	name:'交换目录或文件',
 	dir1:"",
 	dir2:"",
-	tmp:'',
 	desc:'',
 	viewFilters:{
 		desc:'描述',
-		dir1:'目录1',
-		dir2:'目录2',
-		tmp:"中间目录"
+		dir1:'目录或文件1',
+		dir2:'目录或文件2',
 	},
 	exec:function(vo,vars,q){
 		var arr=[];
-		var tmp=(vo.tmp==null|| vo.tmp=="")?'c:\\tmp_sq':vo.tmp;
-		arr.push("move "+vo.dir1+" "+tmp);
-		arr.push("move "+vo.dir2+" "+vo.dir1);
-		arr.push("move "+tmp+" "+vo.dir2);
-
+		var tmp=(vo.tmp==null|| vo.tmp=="")?global.indexPath+'/tmp_chg':vo.tmp;	
+		tmp=tmp.replace(/\//g,"\\");
+		try{
+			if(fs.existsSync(tmp)==false){
+				fs.mkdirSync(tmp);
+			}else{
+				deleteFolderRecursive(tmp);
+			}
+		}catch(e){			
+			global.log(e);
+			return null;
+		}
+		//console.dir(vo);
+		//return;
+		var tmp=(vo.tmp==null|| vo.tmp=="")?vo.dir1+"_tmp":vo.tmp;
+-		arr.push("move "+vo.dir1+" "+tmp);
+-		arr.push("move "+vo.dir2+" "+vo.dir1);
+-		arr.push("move "+tmp+" "+vo.dir2);
+		/*
+		arr.push('xcopy "'+vo.dir1+'" "'+tmp+'" /E /I /F /Y');
+		arr.push('RMDIR /S /Q '+vo.dir1);
+		arr.push('mkdir '+vo.dir1);
+		arr.push('xcopy "'+vo.dir2+'" "'+vo.dir1+'" /E /I /F /Y');
+		arr.push('RMDIR /S /Q '+vo.dir2);
+		arr.push('mkdir '+vo.dir2);
+		arr.push('xcopy "'+tmp+'" "'+vo.dir2+'" /E /I /F /Y');
+		arr.push('RMDIR /S /Q '+tmp);
+		*/
 		var myDefer = Q.defer();
    		setTimeout(function(){
     		myDefer.resolve('');
@@ -445,20 +486,24 @@ jobs.xchgDir={
 		var q = myDefer.promise;
 		var getOne=function(cmd){
 			var call=function(resolve, reject, notify) {
-				exec(cmd,{ cwd: global.cfgs.getVarByKey(vars,"root")}, 
-					function ( err, stdout, stderr ){
-						console.log('end runCmdTmp',err);
+				
+				//setTimeout(function(){
+				//	global.log("运行命令："+cmd);
+				//	resolve();
+				//}, 300);
+				//return;
+				exec(cmd,function ( err, stdout, stderr ){
+					console.log('end runCmdTmp',cmd,err);
 					  if(err){
 					  	if(vo.breakError=='true'){
 							reject(err);
 					  	}else{
 							resolve("运行命令失败" +cmd);
-					 		global.log('运行命令失败',cmd);
-					  	}
-					  	
+					 		//global.log('运行命令失败',cmd);
+					  	}					  	
 					  }else{
 					  	resolve("成功运行命令"+cmd);
-					 	global.log('成功运行命令',cmd);
+					 	//global.log('成功运行命令',cmd);
 					  }
 				});
 
@@ -468,7 +513,9 @@ jobs.xchgDir={
 
 		for(var i=0;i<arr.length;i++){
 			var cmd=arr[i];
-			q=q.then(getOne(cmd));
+			q=q.then(function(cmd){
+				return getOne(cmd);
+			}.bind(null,cmd));
 		}
 		return q;
 	}

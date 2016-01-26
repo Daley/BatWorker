@@ -37,7 +37,6 @@ global.popMgr.init(document.getElementById('pop_layer'))
 
 require('./common/GlobalFunc.js');
 
-
 var _ = require('lodash');
 
 console.dir(AppCfgs);
@@ -53,15 +52,14 @@ var ProjectView = require("./views/body/ProjectView.js");
 // <HeaderView/>
 var Main = React.createClass({
     render: function() {
-       return   <div>
+       return   <div style={{width:"100%",height:"100%"}}>
                     
-                    <Grid fluid={ true }>
+                    <Grid fluid={ true } style={{width:"100%",height:"100%"}}>
 
-                        <Row>                    
                             <Col xs={ 5 }                             
                                  sm={ 4 }
                                  md={ 3 }
-                                 lg={ 3 }>
+                                 lg={ 3 }> 
                                 <SpaceList/>
                             </Col>
                             <Col xs={ 7 }                             
@@ -70,8 +68,18 @@ var Main = React.createClass({
                                  lg={ 9 }>
                             <ProjectView/>
                             </Col>
-                        </Row>
                     </Grid>
+                </div>
+    },
+    renderd: function() {
+       return   <div style={{width:"100%",height:"100%"}}>
+                    
+                            <div style={{width:"30%",height:"100%"}}>
+                                <SpaceList/>
+                            </div>
+                            <div style={{width:"70%",height:"100%"}}>
+                                <ProjectView/>
+                            </div>                    
                 </div>
     }
 });

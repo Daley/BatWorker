@@ -210,10 +210,16 @@ class JobItem extends Component{
             }
                        
         }
+        var title=item.desc;
+        if(filters["desc"]&&typeof(filters["desc"])=="function"){
+            title=filters["title"](item);
+            var desc=filters["desc"](item);
+            arr.push(<Col {...cps}><Label>{desc}</Label></Col>);
+        }
 
     //global.log("render jobview",item.expanded);
         //<Row>{arr}</Row>defaultExpanded={true} expanded={true} <Glyphicon glyph="ok" /> <Button bsSize="xsmall" onClick={this.onCutViewSelect.bind(this)}>J</Button>
-    var head=<div>{item.name+"--::--"+item.desc+"  "}
+    var head=<div>{item.name+"--::--"+title+"  "}
                 <ToggleBtn selected={need} onChange={this.onToggleNeed.bind(this)}/>
                 
                 </div>;

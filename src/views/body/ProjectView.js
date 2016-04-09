@@ -124,8 +124,8 @@ var ProjectView = React.createClass({
         return (
            
             <div >
-                <div style={{backgroundColor:"#B3E2F4",fontSize:30}}>{"项目"+'--'+vo.name}</div>
-                <div style={{width:"100%",height:"100%",overflowY:"auto"}}>                         
+                <div style={{backgroundColor:"#B3E2F4",fontSize:30}}>{"项目"+'--'+vo.name+"--"+vo.id}</div>
+                <div style={{width:"100%",height:"95%",overflowY:"auto",overflowX:"hidden"}}>                         
                     {this.renderVarList()}                
                   {this.renderJobList()}
                    

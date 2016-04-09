@@ -1,1 +1,1 @@
-nw .\public
+start nw .\public

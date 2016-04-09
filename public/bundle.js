@@ -54793,6 +54793,9 @@
 		},
 		exec: function exec(vo) {
 			var cpFile = __webpack_require__(451);
+
+			global.log('复制文件', vo.copyFrom, vo.copyTo);
+
 			return cpFile(vo.copyFrom, vo.copyTo, { overwrite: true });
 
 			return Q.Promise(function (resolve, reject, notify) {
@@ -54911,10 +54914,11 @@
 							node = node.getElementsByTagName(arr[j - 1])[0];
 							//console.log('fuck why');
 							list = list[0].getElementsByTagName(arr[j]);
-							console.log('fuck here end', arr[j]);
 						}
 
+						console.log('fuck here end', list.length);
 						for (var j = 0; j < list.length; j++) {
+							console.log(list[j]);
 							node.appendChild(list[j].cloneNode(true));
 							//node.appendChild('\n\r');
 						}
@@ -55230,6 +55234,46 @@
 			return q;
 		}
 
+	};
+
+	//以一个项目为内容的
+	jobs.jobTemp = {
+		id: 10,
+		type: 'job',
+		name: '工作项目',
+		projId: 0,
+		viewFilters: {
+			desc: function desc(vo) {
+				var _global$WorkStore$findProject = global.WorkStore.findProject(vo.projId);
+
+				var space = _global$WorkStore$findProject.space;
+				var project = _global$WorkStore$findProject.project;
+
+				if (project == null) {
+					return "变量列表:null";
+				}
+				var arr = [];
+				for (var i = 0; i < project.vars.length; i++) {
+					arr.push(project.vars[i].name);
+				}
+				return "变量列表:" + arr.join(",");
+			},
+			title: function title(vo) {
+				var _global$WorkStore$findProject2 = global.WorkStore.findProject(vo.projId);
+
+				var space = _global$WorkStore$findProject2.space;
+				var project = _global$WorkStore$findProject2.project;
+
+				if (project == null) {
+					return "null";
+				}
+				return project.name;
+			},
+			projId: '项目id'
+		},
+		exec: function exec(vo, vars) {
+			return global.QueueStore.runProject(vo.projId, vars);
+		}
 	};
 
 	exports['default'] = jobs;
@@ -66163,7 +66207,7 @@
 	        //alert(msg);
 	    },
 
-	    runProject: function runProject(id) {
+	    runProject: function runProject(id, vars) {
 	        var _global$WorkStore$findProject = global.WorkStore.findProject(id);
 
 	        var space = _global$WorkStore$findProject.space;
@@ -66173,6 +66217,23 @@
 	        if (project == null) {
 	            global.log("没找到项目:", id);
 	            return;
+	        }
+	        //可以替换自己的变量
+	        if (vars != null) {
+	            project = global.cloneCreate(project, false);
+	            var my = project.vars;
+	            for (var i = 0; i < vars.length; i++) {
+	                var v = vars[i];
+	                for (var j = 0; j < my.length; j++) {
+	                    if (my[j].name == v.name) {
+	                        my[j].val = v.val;
+	                        break;
+	                    }
+	                }
+	                if (j == my.length) {
+	                    my.push(v);
+	                }
+	            }
 	        }
 	        var q = Q.Promise(function (resolve, reject, notify) {
 	            window.log("开始运行项目", project.name);
@@ -66392,6 +66453,8 @@
 	};
 
 	global.cloneCreate = function (data) {
+	    var addId = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
+
 	    var obj = _.clone(data, true);
 	    if (_.isString(obj)) {
 	        return obj;
@@ -66407,8 +66470,9 @@
 	            }
 	        }
 	    };
-
-	    chgId(obj);
+	    if (addId) {
+	        chgId(obj);
+	    }
 	    delete obj.viewFilters;
 	    delete obj.exec;
 	    console.log('dengyp new clone');
@@ -66952,7 +67016,7 @@
 	            ),
 	            React.createElement(
 	                'div',
-	                { style: { width: "100%", height: "100%", overflowY: "auto" } },
+	                { style: { width: "100%", height: "92%", overflowY: "auto" } },
 	                React.createElement(_commonIndexJs.ValueGroup, spProps)
 	            )
 	        );
@@ -67118,11 +67182,11 @@
 	            React.createElement(
 	                'div',
 	                { style: { backgroundColor: "#B3E2F4", fontSize: 30 } },
-	                "项目" + '--' + vo.name
+	                "项目" + '--' + vo.name + "--" + vo.id
 	            ),
 	            React.createElement(
 	                'div',
-	                { style: { width: "100%", height: "100%", overflowY: "auto" } },
+	                { style: { width: "100%", height: "95%", overflowY: "auto", overflowX: "hidden" } },
 	                this.renderVarList(),
 	                this.renderJobList()
 	            )
@@ -67434,13 +67498,27 @@
 	                    ));
 	                }
 	            }
+	            var title = item.desc;
+	            if (filters["desc"] && typeof filters["desc"] == "function") {
+	                title = filters["title"](item);
+	                var desc = filters["desc"](item);
+	                arr.push(_react2['default'].createElement(
+	                    _reactBootstrap.Col,
+	                    cps,
+	                    _react2['default'].createElement(
+	                        _reactBootstrap.Label,
+	                        null,
+	                        desc
+	                    )
+	                ));
+	            }
 
 	            //global.log("render jobview",item.expanded);
 	            //<Row>{arr}</Row>defaultExpanded={true} expanded={true} <Glyphicon glyph="ok" /> <Button bsSize="xsmall" onClick={this.onCutViewSelect.bind(this)}>J</Button>
 	            var head = _react2['default'].createElement(
 	                'div',
 	                null,
-	                item.name + "--::--" + item.desc + "  ",
+	                item.name + "--::--" + title + "  ",
 	                _react2['default'].createElement(_commonIndexJs.ToggleBtn, { selected: need, onChange: this.onToggleNeed.bind(this) })
 	            );
 

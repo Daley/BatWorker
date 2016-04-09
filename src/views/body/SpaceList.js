@@ -209,7 +209,7 @@ var SpaceList = React.createClass({
                          }
                         </ButtonGroup>
                     
-                 <div style={{width:"100%",height:"100%",overflowY:"auto"}}>
+                 <div style={{width:"100%",height:"92%",overflowY:"auto"}}>
                     <ValueGroup {...spProps} ></ValueGroup>
                  </div>
                 </div>

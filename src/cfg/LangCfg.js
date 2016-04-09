@@ -1,6 +1,6 @@
 
 var lang={
-	APP_NAME:"BatWorker",
+	APP_NAME:"打包工具",
 	
 }
 

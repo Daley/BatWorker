@@ -30,7 +30,7 @@ global.getPanelNameByType=function(type){
 }
 
 
-global.cloneCreate=function(data){
+global.cloneCreate=function(data,addId=true){
 	var obj=_.clone(data,true);
     if(_.isString(obj)){
         return obj;
@@ -46,8 +46,9 @@ global.cloneCreate=function(data){
             }
         }
     }
-	
-    chgId(obj);
+	if(addId){
+       chgId(obj); 
+    }    
     delete obj.viewFilters;
     delete obj.exec;
 	console.log('dengyp new clone');

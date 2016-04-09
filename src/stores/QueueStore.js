@@ -106,12 +106,30 @@ var QueueStore = Reflux.createStore({
             //alert(msg);
     },
 
-    runProject:function(id) {
+    runProject:function(id,vars) {
     	var {space,project}=global.WorkStore.findProject(id);
         this.lastProject=id;
         if(project==null){
             global.log("没找到项目:",id);
             return;
+        }
+        //可以替换自己的变量
+        if(vars!=null){
+            project=global.cloneCreate(project,false);
+            var my=project.vars;
+            for(var i=0;i<vars.length;i++){
+                var v=vars[i];
+                for(var j=0;j<my.length;j++){
+                    if(my[j].name==v.name){
+                        my[j].val=v.val;
+                        break;
+                    }
+                }
+                if(j==my.length){
+                    my.push(v);
+                }              
+            }
+           
         }
         var q=Q.Promise(function(resolve, reject, notify) {
             window.log("开始运行项目",project.name);

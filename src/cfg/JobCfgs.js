@@ -70,6 +70,9 @@ jobs.copyFileTmp={
 	},
 	exec:function(vo){
 		var cpFile = require('cp-file');
+
+		global.log('复制文件',vo.copyFrom,vo.copyTo);
+
 		return cpFile(vo.copyFrom, vo.copyTo,{overwrite:true});
 
 		return Q.Promise(function(resolve, reject, notify) {
@@ -194,11 +197,12 @@ jobs.combinXmlTmp={
 						node=node.getElementsByTagName(arr[j-1])[0];
 						//console.log('fuck why');
 						list=list[0].getElementsByTagName(arr[j]);
-						console.log('fuck here end',arr[j]);
+						
 					}
 										
-					
+					console.log('fuck here end',list.length);
 					for(var j=0;j<list.length;j++){
+						console.log(list[j]);
 						node.appendChild(list[j].cloneNode(true));
 						//node.appendChild('\n\r');
 					}
@@ -520,6 +524,38 @@ jobs.xchgDir={
 		return q;
 	}
 
+}
+
+//以一个项目为内容的
+jobs.jobTemp={
+	id:10,
+	type:'job',
+	name:'工作项目',
+	projId:0,
+	viewFilters:{
+		desc:function(vo){
+			var {space,project}=global.WorkStore.findProject(vo.projId);
+	        if(project==null){
+	            return "变量列表:null";
+	        }
+	        var arr=[];
+	        for(var i=0;i<project.vars.length;i++){
+	        	arr.push(project.vars[i].name);
+	        }
+			return "变量列表:"+arr.join(",");
+		},
+		title:function(vo){
+			var {space,project}=global.WorkStore.findProject(vo.projId);
+	        if(project==null){
+	            return "null";
+	        }
+			return project.name;
+		},
+		projId:'项目id'
+	},
+	exec:function(vo,vars){
+		return global.QueueStore.runProject(vo.projId,vars);
+	}
 }
 
 

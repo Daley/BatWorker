@@ -117,6 +117,8 @@ var QueueStore = Reflux.createStore({
         if(vars!=null){
             project=global.cloneCreate(project,false);
             var my=project.vars;
+           // console.log("mine:"+JSON.stringify(my));
+            //console.log("vars:"+JSON.stringify(vars));
             for(var i=0;i<vars.length;i++){
                 var v=vars[i];
                 for(var j=0;j<my.length;j++){
@@ -131,6 +133,7 @@ var QueueStore = Reflux.createStore({
             }
            
         }
+        console.log(JSON.stringify(project.vars));
         var q=Q.Promise(function(resolve, reject, notify) {
             window.log("开始运行项目",project.name);
             console.dir(project);

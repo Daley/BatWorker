@@ -100,7 +100,7 @@
 
 	__webpack_require__(507);
 
-	var _ = __webpack_require__(442);
+	var _ = __webpack_require__(443);
 
 	console.dir(_cfgAppCfgsJs2['default']);
 
@@ -179,6 +179,15 @@
 	            if (cz == null) {
 	                return;
 	            }
+	            //以前版本没加快键          
+	            if (item.panel_id == "jobQueue" && item.key == null) {
+	                item = item.set("key", "J");
+	            } else if (item.panel_id == "logView" && item.key == null) {
+	                item = item.set("key", "L");
+	            }
+	            //global.log("showPanel:"+item.panel_id);
+	            // item.set("top",300);
+	            //item.set("left",300);
 	            global.showPop({
 	                isFloat: true, vo: item,
 	                clazz: cz,
@@ -38330,7 +38339,7 @@
 	    XEditableText: __webpack_require__(439),
 	    LogView: __webpack_require__(440),
 	    PopGroup: __webpack_require__(441),
-	    ToggleBtn: __webpack_require__(444),
+	    ToggleBtn: __webpack_require__(442),
 	    ValueGroup: __webpack_require__(445),
 	    ConfirmView: __webpack_require__(418),
 	    InfoView: __webpack_require__(419)
@@ -41098,7 +41107,7 @@
 
 	var _reactBootstrap = __webpack_require__(177);
 
-	var _ = __webpack_require__(442);
+	var _ = __webpack_require__(443);
 
 	var PanelWrapper = (function (_Component) {
 		_inherits(PanelWrapper, _Component);
@@ -41207,6 +41216,33 @@
 				e.stopPropagation();
 			}
 		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				var vo = this.props.vo;
+				console.log("........................." + vo.key);
+				if (vo.key != null) {
+
+					global.keyMgr.register('ctrl_' + vo.key, this.showOrHide.bind(this));
+				}
+			}
+		}, {
+			key: 'componentWillUnmount',
+			value: function componentWillUnmount() {
+				var vo = this.props.vo;
+				if (vo.key != null) {
+					global.keyMgr.register('ctrl_' + vo.key, null);
+				}
+			}
+		}, {
+			key: 'showOrHide',
+			value: function showOrHide() {
+
+				var vo = this.props.vo;
+				console.log("........................." + vo.key);
+				this.props.vo = vo.set("show", !vo.show);
+				this.setState({ "isMouseDown": false });
+			}
+		}, {
 			key: 'onMouseUp',
 			value: function onMouseUp(e) {
 				this.setState({ isMouseDown: false });
@@ -41228,22 +41264,29 @@
 		}, {
 			key: 'renderHeader',
 			value: function renderHeader() {
+				var vo = this.props.vo;
+
 				return _react2['default'].createElement(
 					'div',
 					{ style: { cursor: 'move' }, onMouseDown: this.onMouseDown.bind(this) },
-					this.props.header
+					this.props.header + (vo.key ? "(" + vo.key + ")" : "")
 				);
 			}
 		}, {
 			key: 'render',
 			value: function render() {
+
 				var vo = this.props.vo;
+				if (!vo.show) {
+					return _react2['default'].createElement('div', null);
+				}
 				var mouse = this.state.mouse ? this.state.mouse : { x: vo.left, y: vo.top };
 				var clazz = this.props.clazz;
 				var obj = { height: vo.height, position: 'absolute', left: mouse.x, top: mouse.y, width: vo.width };
 				var header = this.renderHeader(); //this.props.header;
 
 				//obj={position: 'absolute',backgroundColor:'green',left:vo.left,top:vo.top};
+				//React.createElement(clazz)
 
 				return _react2['default'].createElement(
 					'div',
@@ -41313,6 +41356,9 @@
 
 				var onCallBack = this.onCallback.bind(this);
 
+				//console.log("ssssssssssssssss")
+				//console.dir(pops);
+
 				return _react2['default'].createElement(
 					'div',
 					null,
@@ -41336,6 +41382,83 @@
 
 /***/ },
 /* 442 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(22);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(177);
+
+	var _ = __webpack_require__(443);
+
+	var ToggleBtn = (function (_Component) {
+		_inherits(ToggleBtn, _Component);
+
+		function ToggleBtn() {
+			_classCallCheck(this, ToggleBtn);
+
+			_get(Object.getPrototypeOf(ToggleBtn.prototype), 'constructor', this).call(this);
+			this.state = { ran: Math.random() };
+		}
+
+		_createClass(ToggleBtn, [{
+			key: 'onChange',
+			value: function onChange(e) {
+
+				this.props.selected = !this.props.selected;
+				this.props.onChange(this.props.selected);
+
+				//setTimeout(function(){
+				this.setState({ ran: Math.random() });
+				//}.bind(this), 10);
+
+				//e.stopPropagation();
+				//e.stopImmediatePropagation();
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+
+				if (this.props.selected) {
+					return _react2['default'].createElement(
+						_reactBootstrap.Button,
+						{ bsSize: 'xsmall', onClick: this.onChange.bind(this) },
+						_react2['default'].createElement(_reactBootstrap.Glyphicon, { glyph: 'ok' })
+					);
+				}
+				return _react2['default'].createElement(
+					_reactBootstrap.Button,
+					{ bsSize: 'xsmall', onClick: this.onChange.bind(this) },
+					_react2['default'].createElement(_reactBootstrap.Glyphicon, { glyph: 'remove' })
+				);
+			}
+		}]);
+
+		return ToggleBtn;
+	})(_react.Component);
+
+	exports['default'] = ToggleBtn;
+	module.exports = exports['default'];
+
+/***/ },
+/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -53690,10 +53813,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(443)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(444)(module), (function() { return this; }())))
 
 /***/ },
-/* 443 */
+/* 444 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -53707,83 +53830,6 @@
 		return module;
 	}
 
-
-/***/ },
-/* 444 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-		value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(22);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactBootstrap = __webpack_require__(177);
-
-	var _ = __webpack_require__(442);
-
-	var ToggleBtn = (function (_Component) {
-		_inherits(ToggleBtn, _Component);
-
-		function ToggleBtn() {
-			_classCallCheck(this, ToggleBtn);
-
-			_get(Object.getPrototypeOf(ToggleBtn.prototype), 'constructor', this).call(this);
-			this.state = { ran: Math.random() };
-		}
-
-		_createClass(ToggleBtn, [{
-			key: 'onChange',
-			value: function onChange(e) {
-
-				this.props.selected = !this.props.selected;
-				this.props.onChange(this.props.selected);
-
-				//setTimeout(function(){
-				this.setState({ ran: Math.random() });
-				//}.bind(this), 10);
-
-				//e.stopPropagation();
-				//e.stopImmediatePropagation();
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-
-				if (this.props.selected) {
-					return _react2['default'].createElement(
-						_reactBootstrap.Button,
-						{ bsSize: 'xsmall', onClick: this.onChange.bind(this) },
-						_react2['default'].createElement(_reactBootstrap.Glyphicon, { glyph: 'ok' })
-					);
-				}
-				return _react2['default'].createElement(
-					_reactBootstrap.Button,
-					{ bsSize: 'xsmall', onClick: this.onChange.bind(this) },
-					_react2['default'].createElement(_reactBootstrap.Glyphicon, { glyph: 'remove' })
-				);
-			}
-		}]);
-
-		return ToggleBtn;
-	})(_react.Component);
-
-	exports['default'] = ToggleBtn;
-	module.exports = exports['default'];
 
 /***/ },
 /* 445 */
@@ -53838,7 +53884,7 @@
 	var OverlayTrigger = ReactBootstrap.OverlayTrigger;
 	var Tooltip = ReactBootstrap.Tooltip;
 
-	var _ = __webpack_require__(442);
+	var _ = __webpack_require__(443);
 	var global = window;
 
 	//props @items @creator @viewFilters={k:v} v is desc
@@ -54897,15 +54943,17 @@
 			var runText = function runText(url) {
 				return q.then(function (result) {
 					//console.log('dengyp replaceVarTmp '+result);
-					global.log('合并xml处理', url);
+					global.log('合并xml处理sss', url);
 					//console.dir(result);
 					var data = fs.readFileSync(url, 'utf8');
+					//global.log("fuck1");
 					var xml = dealData(data);
+					//global.log("fuck2");
 					vo.nodes = ["uses-permission", "application.activity", "application.meta-data", "application.receiver", "application.service", "application.provider"];
-					//console.dir(xml);
+					//global.log("fuck"+vo.nodes.length);
 					for (var i = 0; i < vo.nodes.length; i++) {
 						var arr = vo.nodes[i].split(".");
-						console.log('dengyp runNext', vo.nodes[i]);
+						console.log('dengyp runNext' + vo.nodes[i]);
 						console.dir(arr);
 						var node = result.documentElement;
 						var list = xml.getElementsByTagName(arr[0]);
@@ -54918,12 +54966,12 @@
 
 						console.log('fuck here end', list.length);
 						for (var j = 0; j < list.length; j++) {
-							console.log(list[j]);
+							//console.log(list[j]);
 							node.appendChild(list[j].cloneNode(true));
 							//node.appendChild('\n\r');
 						}
-						console.dir(node);
-						console.dir(list);
+						//console.dir(node);
+						//console.dir(list);
 					}
 
 					return result;
@@ -64621,7 +64669,7 @@
 	var SpaceActions = global.SpaceActions;
 	var ProjectActions = global.ProjectActions;
 
-	var _ = __webpack_require__(442);
+	var _ = __webpack_require__(443);
 	var fs = __webpack_require__(449);
 	var gui = __webpack_require__(416);
 	var process = __webpack_require__(502);
@@ -66105,7 +66153,7 @@
 	var Reflux = __webpack_require__(1);
 	var QueueActions = window.QueueActions;
 	var Q = __webpack_require__(450);
-	var _ = __webpack_require__(442);
+	var _ = __webpack_require__(443);
 
 	var defaultModel = [];
 	var isRunning = false;
@@ -66222,6 +66270,8 @@
 	        if (vars != null) {
 	            project = global.cloneCreate(project, false);
 	            var my = project.vars;
+	            // console.log("mine:"+JSON.stringify(my));
+	            //console.log("vars:"+JSON.stringify(vars));
 	            for (var i = 0; i < vars.length; i++) {
 	                var v = vars[i];
 	                for (var j = 0; j < my.length; j++) {
@@ -66235,6 +66285,7 @@
 	                }
 	            }
 	        }
+	        console.log(JSON.stringify(project.vars));
 	        var q = Q.Promise(function (resolve, reject, notify) {
 	            window.log("开始运行项目", project.name);
 	            console.dir(project);
@@ -66427,7 +66478,7 @@
 
 	var global = window;
 
-	var _ = __webpack_require__(442);
+	var _ = __webpack_require__(443);
 
 	global.getPanelByType = function (type) {
 	    if (type == "jobQueue") {
@@ -66545,7 +66596,7 @@
 
 	var _reactBootstrap = __webpack_require__(177);
 
-	var _ = __webpack_require__(442);
+	var _ = __webpack_require__(443);
 
 	var global = window;
 
@@ -66665,24 +66716,36 @@
 
 	        _get(Object.getPrototypeOf(JobQueueView.prototype), 'constructor', this).call(this);
 
-	        this.state = { list: global.QueueStore.model };
+	        this.state = { list: global.QueueStore.model, show: false };
 	    }
 
 	    _createClass(JobQueueView, [{
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            this.unsubscribe = global.QueueStore.listen(this.onModelChange.bind(this));
+
+	            //global.keyMgr.register('ctrl_j',this.showOrHide.bind(this));
 	        }
 	    }, {
 	        key: 'componentWillUnmount',
 	        value: function componentWillUnmount() {
 	            this.unsubscribe();
+
+	            //global.keyMgr.register('ctrl_j',null);
+	        }
+	    }, {
+	        key: 'showOrHide',
+	        value: function showOrHide() {
+	            var s = this.state;
+	            this.setState({ list: s.list, show: !s.show });
 	        }
 	    }, {
 	        key: 'onModelChange',
 	        value: function onModelChange(model) {
 	            console.log('dengyp JobQueueView.onModelChange');
-	            this.setState({ list: model });
+	            //this.setState({list:model});
+	            var s = this.state;
+	            this.setState({ list: model, show: s.show });
 	        }
 	    }, {
 	        key: 'onRun',
@@ -66697,6 +66760,7 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+
 	            var ps = {};
 	            ps.list = this.state.list;
 	            ps.disableCreate = true;
@@ -67227,7 +67291,7 @@
 
 	var _commonIndexJs = __webpack_require__(413);
 
-	var _ = __webpack_require__(442);
+	var _ = __webpack_require__(443);
 
 	var global = window;
 

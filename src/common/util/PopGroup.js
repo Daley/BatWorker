@@ -83,6 +83,31 @@ class MovePanel extends Component{
 		
 	}
 
+	componentDidMount() {
+        var vo=this.props.vo;
+        console.log("........................."+vo.key);
+        if(vo.key!=null){
+
+        	global.keyMgr.register('ctrl_'+vo.key,this.showOrHide.bind(this));
+        }        
+    }
+
+    componentWillUnmount() {
+        var vo=this.props.vo;
+        if(vo.key!=null){
+        	global.keyMgr.register('ctrl_'+vo.key,null);
+        }  
+    }
+
+    showOrHide(){
+
+        var vo=this.props.vo;
+        console.log("........................."+vo.key);
+        this.props.vo=vo.set("show",!vo.show);
+        this.setState({"isMouseDown":false});
+    }
+
+
 	onMouseUp(e){
 		this.setState({isMouseDown:false});
 		var vo=this.props.vo;
@@ -101,25 +126,30 @@ class MovePanel extends Component{
 
  //onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}
 	renderHeader(){
+		var vo=this.props.vo;
+
 		return <div style={{cursor:'move'}} onMouseDown={this.onMouseDown.bind(this)}>
-					{this.props.header}
+					{this.props.header+(vo.key?"("+vo.key+")":"")}
 				</div>
 	}
 
 	render(){
+
 		var vo=this.props.vo;
+		if(!vo.show){
+			return <div/>;
+		}
 		var mouse=this.state.mouse?this.state.mouse:{x:vo.left,y:vo.top};
 		var clazz=this.props.clazz;
 		var obj={height: vo.height,position: 'absolute',left:mouse.x,top:mouse.y,width:vo.width};
 		var header=this.renderHeader();//this.props.header;
 
 		//obj={position: 'absolute',backgroundColor:'green',left:vo.left,top:vo.top};
+		//React.createElement(clazz)
 
 		return <div style={obj} >
 					<Panel header={header} >
-						{
-							React.createElement(clazz)
-						}
+						{React.createElement(clazz)}
 					</Panel>
 				</div>;
 	}
@@ -168,6 +198,9 @@ class PopGroup extends Component{
 		global.clearPop=this.clearPop.bind(this);
 
 		var onCallBack=this.onCallback.bind(this);
+
+		//console.log("ssssssssssssssss")
+		//console.dir(pops);
 
 		return(<div>
 				{			

@@ -104,6 +104,15 @@ var showAllPanels=function(){
             if(cz==null){
                 return;
             }
+            //以前版本没加快键           
+            if(item.panel_id=="jobQueue"&&item.key==null){
+                item=item.set("key","J");
+            }else if(item.panel_id=="logView" &&item.key==null){
+                item=item.set("key","L");
+            }
+            //global.log("showPanel:"+item.panel_id);
+           // item.set("top",300);
+            //item.set("left",300);
             global.showPop(
                 {
                     isFloat:true,vo:item,
@@ -116,7 +125,6 @@ var showAllPanels=function(){
     func();
 }
 showAllPanels();
-
 
 
 var renderHelpBody=function(){

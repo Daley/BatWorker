@@ -67,21 +67,32 @@ class JobQueueView extends Component{
 	constructor() {
 		super();
 		
-        this.state= {list:global.QueueStore.model};
+        this.state= {list:global.QueueStore.model,show:false};
 	}
 
 
     componentDidMount() {
         this.unsubscribe = global.QueueStore.listen(this.onModelChange.bind(this));
+
+        //global.keyMgr.register('ctrl_j',this.showOrHide.bind(this));
     }
 
     componentWillUnmount() {
         this.unsubscribe();
+
+        //global.keyMgr.register('ctrl_j',null);
+    }
+
+    showOrHide(){
+        var s=this.state;
+        this.setState({list:s.list,show:!s.show});
     }
 
     onModelChange(model) {
          console.log('dengyp JobQueueView.onModelChange');
-        this.setState({list:model});
+        //this.setState({list:model});
+        var s=this.state;
+        this.setState({list:model,show:s.show});
     }
 
     onRun(){
@@ -93,6 +104,7 @@ class JobQueueView extends Component{
     }
 
 	render(){
+       
         var ps={};
         ps.list=this.state.list;
         ps.disableCreate=true;

@@ -174,10 +174,12 @@ jobs.combinXmlTmp={
     	var runText=function(url){
     		return q.then(function(result){
 				//console.log('dengyp replaceVarTmp '+result);
-				global.log('合并xml处理',url);
+				global.log('合并xml处理sss',url);
 				//console.dir(result);
 				var data=fs.readFileSync(url,'utf8');
+				//global.log("fuck1");
 				var xml=dealData(data);
+				//global.log("fuck2");
 				vo.nodes=[     "uses-permission",
                                 "application.activity",
                                 "application.meta-data",
@@ -185,10 +187,10 @@ jobs.combinXmlTmp={
                                 "application.service",
                                 "application.provider"
                             ];
-				//console.dir(xml);
+                //global.log("fuck"+vo.nodes.length);
 				for(var i=0;i<vo.nodes.length;i++){
 					var arr=vo.nodes[i].split(".");
-					console.log('dengyp runNext',vo.nodes[i]);
+					console.log('dengyp runNext'+vo.nodes[i]);
 					console.dir(arr);
 					var node=result.documentElement;
 					var list=xml.getElementsByTagName(arr[0]);
@@ -202,12 +204,12 @@ jobs.combinXmlTmp={
 										
 					console.log('fuck here end',list.length);
 					for(var j=0;j<list.length;j++){
-						console.log(list[j]);
+						//console.log(list[j]);
 						node.appendChild(list[j].cloneNode(true));
 						//node.appendChild('\n\r');
 					}
-					console.dir(node);
-					console.dir(list);
+					//console.dir(node);
+					//console.dir(list);
 				}
 
 				return result;

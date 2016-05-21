@@ -3,6 +3,7 @@ var global=window;
 
 import JobQueueView from '../views/body/JobQueueView.js'
 import {CutView,LogView,XEditableText} from "./index.js";
+import FuncCfgs from '../cfg/FuncCfgs.js'
 
 var _ = require('lodash');
 
@@ -83,7 +84,31 @@ global.log=function(){
 global.globalReplace=function(value,vars){
             for(var kv in vars){
                 var {name,val}=vars[kv];
-                value=value.replace(new RegExp("\\$"+name,'g'),val);
+                var repVal = val;
+                
+                //check first char to run func
+               
+                if(val.indexOf('~')>=0)
+                {
+                    val = val.replace('~','');
+                    var arr = new Array();
+                    arr = val.split(',');
+                    var f =FuncCfgs[arr[0]]; 
+                    arr.shift();
+                    //f.apply(this,);
+                   
+                    while(value.indexOf("$"+name)!=-1)
+                    {
+                         repVal = f.apply(this,arr);
+                        value=value.replace(new RegExp("\\$"+name),repVal);                        
+                    }
+                }
+                else
+                {
+                     value=value.replace(new RegExp("\\$"+name,'g'),repVal); 
+                }
+                
+                
             }
             return value;
         }

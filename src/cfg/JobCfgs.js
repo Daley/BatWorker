@@ -336,6 +336,7 @@ jobs.runCmdTmp={
 				//return;
 			global.log('运行命令',vo.cmdStr);
 			//global.log('运行命令',global.cfgs.getVarByKey(vars,"root"));
+			//exec('start '+ vo.cmdStr, function ( err, stdout, stderr ){
 				exec(vo.cmdStr,{ cwd: global.cfgs.getVarByKey(vars,"root")}, 
 					function ( err, stdout, stderr ){
 						console.log('end runCmdTmp',err);
@@ -558,6 +559,55 @@ jobs.jobTemp={
 	exec:function(vo,vars){
 		return global.QueueStore.runProject(vo.projId,vars);
 	}
+}
+
+///增加prj模板
+jobs.prjtmp={
+	id:14,
+	type:'writeprj',
+	desc:'',	
+	name:'存储工程文件',
+	fileName:'',
+	projs:[],
+	islib:'false',
+	viewFilters:{
+		desc:'描述',
+		fileName:'文件名',
+		projs:'子项',
+		islib:'是否为lib'
+	},
+
+	exec:function(vo,vars){
+		console.dir(vo);
+		var q=Q.Promise(function(resolve, reject, notify) {
+			global.log('存储工程文件',vo.fileName);
+			global.log("proj len",vo.projs.length);
+			var str='target=android-19\n';
+			if(vo.islib !='false')
+			{
+				str+="android.library=true\n";
+			}
+			for(var i = 0;i<vo.projs.length;i++)
+			{
+				str+='android.library.reference.'+(i+1)+'='+vo.projs[i]+'\n';
+			}
+			fs.writeFile(vo.fileName,str,"utf8",function(err)
+			{
+				if(err)
+				{
+					reject(err);
+				}
+				else
+				{
+					resolve('');
+				}
+			});
+			
+    	});
+		
+		return q;
+	}
+
 }
 
 

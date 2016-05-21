@@ -1,3 +1,5 @@
+html { overflow: hidden; }
+
 .modal-container {
   position: absolute;
 }
@@ -30,6 +32,7 @@ input[type="text"]{
 }
 
 body{
+overflow:hidden;
 scrollbar-arrow-color: #5; /*图6,三角箭头的颜色*/
 scrollbar-face-color: #333; /*图5,立体滚动条的颜色*/
 scrollbar-3dlight-color: #666; /*图1,立体滚动条亮边的颜

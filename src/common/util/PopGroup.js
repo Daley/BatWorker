@@ -18,13 +18,13 @@ class PanelWrapper extends Component{
 	render() {    
 		
 	    return (
-	      <div style={{height: 200}}>
+	      
 	        
 	        <Modal
 	          show={true}
 	          onHide={this.onClose.bind(this)}
 	          container={this}
-	          aria-labelledby="contained-modal-title"
+	          aria-labelledby="contained-modal-title" width='380px'
 	        >
 	          <Modal.Header closeButton>
 	            {this.props.renderHeader()}
@@ -36,7 +36,7 @@ class PanelWrapper extends Component{
 	            <Button onClick={this.onOk.bind(this)}>确定</Button>
 	          </Modal.Footer>
 	        </Modal>
-	      </div>
+	      
 	    );
 	}
 }

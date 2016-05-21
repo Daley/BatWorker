@@ -59,7 +59,7 @@ class LogView extends Component{
 
 		var pStyle={'wordWrap':'break-word','wordBreak':'break-all'};	
 		//console.log('fuck fuck fuck chchch',this.state.logs);
-		return <div style={{width:'380px',height:'300px','overflow-y':'scroll'}} ref='myDiv'>
+		return <div style={{width:'300px',height:'300px','overflow-y':'scroll'}} ref='myDiv'>
 					<Button bsSize="small" onClick={this.onClean.bind(this)}>清理</Button>
 			{
 				

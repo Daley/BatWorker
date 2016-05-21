@@ -146,3 +146,7 @@ var showHelp=function(){
         window.popMgr.showInfo('简单的帮助',renderHelpBody());
 }
 window.keyMgr.register('ctrl_h',showHelp);
+window.keyMgr.register('F5',function(){
+    var win = nw.Window.get();
+    win.reload();
+});

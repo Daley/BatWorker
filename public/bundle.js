@@ -100,7 +100,7 @@
 
 	__webpack_require__(507);
 
-	var _ = __webpack_require__(443);
+	var _ = __webpack_require__(442);
 
 	console.dir(_cfgAppCfgsJs2['default']);
 
@@ -108,8 +108,8 @@
 	console.log("workVo");
 	console.dir(global.WorkStore);
 
-	var SpaceList = __webpack_require__(509);
-	var ProjectView = __webpack_require__(510);
+	var SpaceList = __webpack_require__(510);
+	var ProjectView = __webpack_require__(511);
 
 	// <HeaderView/>
 	var Main = _react2['default'].createClass({
@@ -252,6 +252,10 @@
 	    window.popMgr.showInfo('简单的帮助', renderHelpBody());
 	};
 	window.keyMgr.register('ctrl_h', showHelp);
+	window.keyMgr.register('F5', function () {
+	    var win = nw.Window.get();
+	    win.reload();
+	});
 
 /***/ },
 /* 1 */
@@ -38339,7 +38343,7 @@
 	    XEditableText: __webpack_require__(439),
 	    LogView: __webpack_require__(440),
 	    PopGroup: __webpack_require__(441),
-	    ToggleBtn: __webpack_require__(442),
+	    ToggleBtn: __webpack_require__(444),
 	    ValueGroup: __webpack_require__(445),
 	    ConfirmView: __webpack_require__(418),
 	    InfoView: __webpack_require__(419)
@@ -41053,7 +41057,7 @@
 													//console.log('fuck fuck fuck chchch',this.state.logs);
 													return _react2['default'].createElement(
 																	'div',
-																	{ style: { width: '380px', height: '300px', 'overflow-y': 'scroll' }, ref: 'myDiv' },
+																	{ style: { width: '300px', height: '300px', 'overflow-y': 'scroll' }, ref: 'myDiv' },
 																	_react2['default'].createElement(
 																					_reactBootstrap.Button,
 																					{ bsSize: 'small', onClick: this.onClean.bind(this) },
@@ -41107,7 +41111,7 @@
 
 	var _reactBootstrap = __webpack_require__(177);
 
-	var _ = __webpack_require__(443);
+	var _ = __webpack_require__(442);
 
 	var PanelWrapper = (function (_Component) {
 		_inherits(PanelWrapper, _Component);
@@ -41133,34 +41137,30 @@
 			value: function render() {
 
 				return _react2['default'].createElement(
-					'div',
-					{ style: { height: 200 } },
+					_reactBootstrap.Modal,
+					{
+						show: true,
+						onHide: this.onClose.bind(this),
+						container: this,
+						'aria-labelledby': 'contained-modal-title', width: '380px'
+					},
 					_react2['default'].createElement(
-						_reactBootstrap.Modal,
-						{
-							show: true,
-							onHide: this.onClose.bind(this),
-							container: this,
-							'aria-labelledby': 'contained-modal-title'
-						},
+						_reactBootstrap.Modal.Header,
+						{ closeButton: true },
+						this.props.renderHeader()
+					),
+					_react2['default'].createElement(
+						_reactBootstrap.Modal.Body,
+						null,
+						this.props.renderBody()
+					),
+					_react2['default'].createElement(
+						_reactBootstrap.Modal.Footer,
+						null,
 						_react2['default'].createElement(
-							_reactBootstrap.Modal.Header,
-							{ closeButton: true },
-							this.props.renderHeader()
-						),
-						_react2['default'].createElement(
-							_reactBootstrap.Modal.Body,
-							null,
-							this.props.renderBody()
-						),
-						_react2['default'].createElement(
-							_reactBootstrap.Modal.Footer,
-							null,
-							_react2['default'].createElement(
-								_reactBootstrap.Button,
-								{ onClick: this.onOk.bind(this) },
-								'确定'
-							)
+							_reactBootstrap.Button,
+							{ onClick: this.onOk.bind(this) },
+							'确定'
 						)
 					)
 				);
@@ -41382,83 +41382,6 @@
 
 /***/ },
 /* 442 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-		value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(22);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _reactBootstrap = __webpack_require__(177);
-
-	var _ = __webpack_require__(443);
-
-	var ToggleBtn = (function (_Component) {
-		_inherits(ToggleBtn, _Component);
-
-		function ToggleBtn() {
-			_classCallCheck(this, ToggleBtn);
-
-			_get(Object.getPrototypeOf(ToggleBtn.prototype), 'constructor', this).call(this);
-			this.state = { ran: Math.random() };
-		}
-
-		_createClass(ToggleBtn, [{
-			key: 'onChange',
-			value: function onChange(e) {
-
-				this.props.selected = !this.props.selected;
-				this.props.onChange(this.props.selected);
-
-				//setTimeout(function(){
-				this.setState({ ran: Math.random() });
-				//}.bind(this), 10);
-
-				//e.stopPropagation();
-				//e.stopImmediatePropagation();
-			}
-		}, {
-			key: 'render',
-			value: function render() {
-
-				if (this.props.selected) {
-					return _react2['default'].createElement(
-						_reactBootstrap.Button,
-						{ bsSize: 'xsmall', onClick: this.onChange.bind(this) },
-						_react2['default'].createElement(_reactBootstrap.Glyphicon, { glyph: 'ok' })
-					);
-				}
-				return _react2['default'].createElement(
-					_reactBootstrap.Button,
-					{ bsSize: 'xsmall', onClick: this.onChange.bind(this) },
-					_react2['default'].createElement(_reactBootstrap.Glyphicon, { glyph: 'remove' })
-				);
-			}
-		}]);
-
-		return ToggleBtn;
-	})(_react.Component);
-
-	exports['default'] = ToggleBtn;
-	module.exports = exports['default'];
-
-/***/ },
-/* 443 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -53813,10 +53736,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(444)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(443)(module), (function() { return this; }())))
 
 /***/ },
-/* 444 */
+/* 443 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -53830,6 +53753,83 @@
 		return module;
 	}
 
+
+/***/ },
+/* 444 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(22);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactBootstrap = __webpack_require__(177);
+
+	var _ = __webpack_require__(442);
+
+	var ToggleBtn = (function (_Component) {
+		_inherits(ToggleBtn, _Component);
+
+		function ToggleBtn() {
+			_classCallCheck(this, ToggleBtn);
+
+			_get(Object.getPrototypeOf(ToggleBtn.prototype), 'constructor', this).call(this);
+			this.state = { ran: Math.random() };
+		}
+
+		_createClass(ToggleBtn, [{
+			key: 'onChange',
+			value: function onChange(e) {
+
+				this.props.selected = !this.props.selected;
+				this.props.onChange(this.props.selected);
+
+				//setTimeout(function(){
+				this.setState({ ran: Math.random() });
+				//}.bind(this), 10);
+
+				//e.stopPropagation();
+				//e.stopImmediatePropagation();
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+
+				if (this.props.selected) {
+					return _react2['default'].createElement(
+						_reactBootstrap.Button,
+						{ bsSize: 'xsmall', onClick: this.onChange.bind(this) },
+						_react2['default'].createElement(_reactBootstrap.Glyphicon, { glyph: 'ok' })
+					);
+				}
+				return _react2['default'].createElement(
+					_reactBootstrap.Button,
+					{ bsSize: 'xsmall', onClick: this.onChange.bind(this) },
+					_react2['default'].createElement(_reactBootstrap.Glyphicon, { glyph: 'remove' })
+				);
+			}
+		}]);
+
+		return ToggleBtn;
+	})(_react.Component);
+
+	exports['default'] = ToggleBtn;
+	module.exports = exports['default'];
 
 /***/ },
 /* 445 */
@@ -53884,7 +53884,7 @@
 	var OverlayTrigger = ReactBootstrap.OverlayTrigger;
 	var Tooltip = ReactBootstrap.Tooltip;
 
-	var _ = __webpack_require__(443);
+	var _ = __webpack_require__(442);
 	var global = window;
 
 	//props @items @creator @viewFilters={k:v} v is desc
@@ -55096,6 +55096,7 @@
 				//return;
 				global.log('运行命令', vo.cmdStr);
 				//global.log('运行命令',global.cfgs.getVarByKey(vars,"root"));
+				//exec('start '+ vo.cmdStr, function ( err, stdout, stderr ){
 				_exec(vo.cmdStr, { cwd: global.cfgs.getVarByKey(vars, "root") }, function (err, stdout, stderr) {
 					console.log('end runCmdTmp', err);
 					if (err) {
@@ -55322,6 +55323,48 @@
 		exec: function exec(vo, vars) {
 			return global.QueueStore.runProject(vo.projId, vars);
 		}
+	};
+
+	///增加prj模板
+	jobs.prjtmp = {
+		id: 14,
+		type: 'writeprj',
+		desc: '',
+		name: '存储工程文件',
+		fileName: '',
+		projs: [],
+		islib: 'false',
+		viewFilters: {
+			desc: '描述',
+			fileName: '文件名',
+			projs: '子项',
+			islib: '是否为lib'
+		},
+
+		exec: function exec(vo, vars) {
+			console.dir(vo);
+			var q = Q.Promise(function (resolve, reject, notify) {
+				global.log('存储工程文件', vo.fileName);
+				global.log("proj len", vo.projs.length);
+				var str = 'target=android-19\n';
+				if (vo.islib != 'false') {
+					str += "android.library=true\n";
+				}
+				for (var i = 0; i < vo.projs.length; i++) {
+					str += 'android.library.reference.' + (i + 1) + '=' + vo.projs[i] + '\n';
+				}
+				fs.writeFile(vo.fileName, str, "utf8", function (err) {
+					if (err) {
+						reject(err);
+					} else {
+						resolve('');
+					}
+				});
+			});
+
+			return q;
+		}
+
 	};
 
 	exports['default'] = jobs;
@@ -64669,7 +64712,7 @@
 	var SpaceActions = global.SpaceActions;
 	var ProjectActions = global.ProjectActions;
 
-	var _ = __webpack_require__(443);
+	var _ = __webpack_require__(442);
 	var fs = __webpack_require__(449);
 	var gui = __webpack_require__(416);
 	var process = __webpack_require__(502);
@@ -66153,7 +66196,7 @@
 	var Reflux = __webpack_require__(1);
 	var QueueActions = window.QueueActions;
 	var Q = __webpack_require__(450);
-	var _ = __webpack_require__(443);
+	var _ = __webpack_require__(442);
 
 	var defaultModel = [];
 	var isRunning = false;
@@ -66476,9 +66519,13 @@
 
 	var _indexJs = __webpack_require__(413);
 
+	var _cfgFuncCfgsJs = __webpack_require__(509);
+
+	var _cfgFuncCfgsJs2 = _interopRequireDefault(_cfgFuncCfgsJs);
+
 	var global = window;
 
-	var _ = __webpack_require__(443);
+	var _ = __webpack_require__(442);
 
 	global.getPanelByType = function (type) {
 	    if (type == "jobQueue") {
@@ -66561,7 +66608,25 @@
 	        var name = _vars$kv.name;
 	        var val = _vars$kv.val;
 
-	        value = value.replace(new RegExp("\\$" + name, 'g'), val);
+	        var repVal = val;
+
+	        //check first char to run func
+
+	        if (val.indexOf('~') >= 0) {
+	            val = val.replace('~', '');
+	            var arr = new Array();
+	            arr = val.split(',');
+	            var f = _cfgFuncCfgsJs2['default'][arr[0]];
+	            arr.shift();
+	            //f.apply(this,);
+
+	            while (value.indexOf("$" + name) != -1) {
+	                repVal = f.apply(this, arr);
+	                value = value.replace(new RegExp("\\$" + name), repVal);
+	            }
+	        } else {
+	            value = value.replace(new RegExp("\\$" + name, 'g'), repVal);
+	        }
 	    }
 	    return value;
 	};
@@ -66596,7 +66661,7 @@
 
 	var _reactBootstrap = __webpack_require__(177);
 
-	var _ = __webpack_require__(443);
+	var _ = __webpack_require__(442);
 
 	var global = window;
 
@@ -66796,6 +66861,39 @@
 
 /***/ },
 /* 509 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var FuncCfgs = {};
+
+	FuncCfgs.randStr = function (cnt) {
+	    var strArr = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz';
+	    var str = "";
+	    var count = parseInt(cnt);
+	    for (var i = 0; i < count; i++) {
+	        str += strArr.charAt(Math.random() * strArr.length);
+	    }
+	    return str;
+	};
+
+	FuncCfgs.randCallBack = function (cnt) {
+	    var count = parseInt(cnt);
+	    var str = "";
+	    for (var i = 0; i < count; i++) {
+	        str += "RubbishCallBack F" + FuncCfgs.randStr(10);
+	        str += "= new RubbishCallBack()" + "{\n@Override\n" + "public int runSth()\n" + "{\nreturn 0;\n" + "}\n" + "};\n";
+	    }
+	    return str;
+	};
+	exports["default"] = FuncCfgs;
+	module.exports = exports["default"];
+
+/***/ },
+/* 510 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {
@@ -67103,7 +67201,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 510 */
+/* 511 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -67113,7 +67211,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _JobViewJs = __webpack_require__(511);
+	var _JobViewJs = __webpack_require__(512);
 
 	var _JobViewJs2 = _interopRequireDefault(_JobViewJs);
 
@@ -67261,7 +67359,7 @@
 	module.exports = ProjectView;
 
 /***/ },
-/* 511 */
+/* 512 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -67291,7 +67389,7 @@
 
 	var _commonIndexJs = __webpack_require__(413);
 
-	var _ = __webpack_require__(443);
+	var _ = __webpack_require__(442);
 
 	var global = window;
 

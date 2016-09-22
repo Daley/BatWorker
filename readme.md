@@ -11,7 +11,7 @@
 + 安装nodejs，npm 并设置环境变量（一般是自动的）
 + 下载nwjs 并设置环境变量
 + npm install (安装代码依赖)
-+ npm run build-run （编译，侦听文件变化编译）
++ npm run build-dev （编译，侦听文件变化编译）
 如此，你可以修改代码，程序会被自动编译输出到public目录
 + 找代码可以看readme.png，可能有用
 
